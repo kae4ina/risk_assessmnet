@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main menu</title>
+</head>
+<body>
+ <form action="{% url 'assets_choose' %}" method="post">
+        {% csrf_token %}
+        <button>Выбрать актив</button>
+    </form>
+ <form action="{% url 'company_create' %}" method="post">
+        {% csrf_token %}
+   <button>Внести данные о компании</button>
+    </form>
+
+</body>
+</html>
