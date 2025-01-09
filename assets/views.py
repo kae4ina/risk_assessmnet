@@ -7,13 +7,28 @@ from django.shortcuts import render, redirect
 from .forms import AssetForm
 
 from assets.Asset import Asset
+from .models import DefaultAssetType
+
 
 def assets_choose(request):
     if request.method == 'POST':
         form = AssetForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('asset_saved') # Замените на нужное представление после сохранения
+            # Получаем введенное значение нового типа актива
+            new_asset_type = form.cleaned_data.get('new_asset_type')
+            # Проверяем, если новое значение было введено
+            if new_asset_type:
+                # Создаем новый тип актива, если он не существует
+                asset_type, created = DefaultAssetType.objects.get_or_create(default_asset_type=new_asset_type)
+                # Создаем экземпляр модели актива
+                asset = form.save(commit=False)
+                asset.default_asset_type = asset_type  # Присваиваем новый тип актива
+                asset.save()  # Сохраняем актив
+            else:
+                # Если новое значение не введено, просто сохраняем актив с выбранным типом
+                asset = form.save()
+
+            return redirect('asset_saved')  # Замените на нужное представление после сохранения
     else:
         form = AssetForm()
 
