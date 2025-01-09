@@ -1,13 +1,16 @@
 from django import forms
 
 from assets.Asset import Asset
-from assets.models import DefaultAssetEnum, DefaultAssetCategory, DefaultAssetValue, DefaultAssetModel
+from assets.models import DefaultAssetType, DefaultAssetCategory, DefaultAssetValue, DefaultAssetModel
 
 
 class AssetForm(forms.ModelForm):
     class Meta:
         model = DefaultAssetModel
-        fields = ['default_asset_name', 'default_asset_category', 'default_asset_value']
-        default_asset_name = forms.ModelChoiceField(queryset=DefaultAssetEnum.objects.all())
-        default_asset_category = forms.ModelChoiceField(queryset=DefaultAssetCategory.objects.all())
-        default_asset_value = forms.ModelChoiceField(queryset=DefaultAssetValue.objects.all())
+        fields = ['name', 'default_asset_type', 'default_asset_category', 'default_asset_value']  # Исправлено на правильные поля
+
+    # Поля выбора определены здесь, но они уже включены в `fields`, так что их можно не дублировать
+
+    default_asset_type = forms.ModelChoiceField(queryset=DefaultAssetType.objects.all())
+    default_asset_category = forms.ModelChoiceField(queryset=DefaultAssetCategory.objects.all())
+    default_asset_value = forms.ModelChoiceField(queryset=DefaultAssetValue.objects.all())
