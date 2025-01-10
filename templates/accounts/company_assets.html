@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CompanyAssets</title>
+</head>
+<body>
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Активы компании {{ assets.first.company.company_name }}</h2>
+<ul>
+    {% for asset in assets %}
+        <li>{{ asset.name }} - {{ asset.default_asset_value }}</li>
+    {% empty %}
+        <li>У этой компании нет активов.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
+{% endblock %}
+</body>
+</html>

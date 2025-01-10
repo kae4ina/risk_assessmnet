@@ -5,17 +5,23 @@
     <title>MyCompanies</title>
 </head>
 <body>
+<!-- templates/accounts/user_companies.html -->
 {% extends "base.html" %}
 
 {% block content %}
 <h2>Мои компании</h2>
 <ul>
     {% for company_user in company_users %}
-        <li>{{ company_user.company.company_name }}</li>
+        <li>
+            <a href="{% url 'company_assets' company_id=company_user.company.id %}">
+                {{ company_user.company.company_name }}
+            </a>
+        </li>
     {% empty %}
         <li>У вас нет компаний.</li>
     {% endfor %}
 </ul>
 {% endblock %}
+
 </body>
 </html>

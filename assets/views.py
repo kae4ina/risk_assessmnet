@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 # assets/views.py
 
@@ -7,7 +8,8 @@ from django.shortcuts import render, redirect
 from .forms import AssetForm
 
 from assets.Asset import Asset
-from .models import DefaultAssetType
+from .models import DefaultAssetType, DefaultAssetModel
+from django.views.generic import ListView
 
 
 def assets_choose(request):
@@ -36,6 +38,16 @@ def assets_choose(request):
 
 def asset_saved(request):
     return render(request, 'assets/asset_saved.html')
+
+class CompanyAssetsView(LoginRequiredMixin, ListView):
+    model = DefaultAssetModel
+    template_name = 'accounts/company_assets.html'  # Создайте этот шаблон
+    context_object_name = 'assets'
+
+    def get_queryset(self):
+        # Получаем ID компании из URL и извлекаем ее активы
+        company_id = self.kwargs['company_id']
+        return DefaultAssetModel.objects.filter(company_id=company_id)
 
 """"def assets_choose(request):
     asset_types = Asset.AsseType.choices
