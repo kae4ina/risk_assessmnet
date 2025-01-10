@@ -8,16 +8,17 @@
 <body>
 
  <h1>Активы</h1>
-   <div>
-    <h1>Create Default Asset</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <h1>Create Default Asset</h1>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="hidden" name="company_id" value="{{ company.id }}">
         <button type="submit">Save</button>
     </form>
-</div>
-
+             </div>
+    </form>
 
 </body>
 </html>

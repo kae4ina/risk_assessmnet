@@ -33,7 +33,7 @@ class DefaultAssetModel(models.Model):
     default_asset_type = models.ForeignKey(DefaultAssetType, on_delete=models.CASCADE)
     default_asset_category = models.ForeignKey(DefaultAssetCategory, on_delete=models.CASCADE)
     default_asset_value = models.ForeignKey(DefaultAssetValue, on_delete=models.CASCADE)
-    company=models.ForeignKey(Company,default=1,related_name='assets',on_delete=CASCADE) # получить все активы компании - company.assets.all()
+    company=models.ForeignKey(Company,related_name='assets',on_delete=CASCADE) # получить все активы компании - company.assets.all()
 
     def __str__(self):
         return self.name
