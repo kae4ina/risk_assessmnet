@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .forms import CompanyForm
@@ -5,6 +6,7 @@ from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import CompanyUser
 
+@login_required
 def company_create(request):
     if request.method == 'POST':
         form = CompanyForm(request.POST)
