@@ -21,6 +21,12 @@
         <li>У вас нет компаний.</li>
     {% endfor %}
 </ul>
+<button id="addCompany">Добавить компанию</button>
+<script>
+    document.getElementById("addCompany").onclick = function() {
+        window.location.href = "{% url 'company_create' %}";
+    };
+</script>
 {% endblock %}
 
 </body>

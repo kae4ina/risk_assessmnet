@@ -33,3 +33,4 @@ class UserCompaniesView(LoginRequiredMixin, ListView):
         return CompanyUser .objects.filter(user=self.request.user)
 
 # Create your views here.
+# при создании компании надо создавать запись в таблице CompanyUser
