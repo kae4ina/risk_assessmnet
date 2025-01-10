@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import CASCADE
+
+from company.models import Company
 
 
 class DefaultAssetCategory(models.Model):
@@ -15,7 +18,7 @@ class DefaultAssetValue(models.Model):
         return self.default_asset_value
 
 
-class DefaultAssetType(models.Model):  # Убедитесь, что у вас есть эта модель
+class DefaultAssetType(models.Model):
     default_asset_type = models.CharField(max_length=100)
 
     def __str__(self):
@@ -30,6 +33,7 @@ class DefaultAssetModel(models.Model):
     default_asset_type = models.ForeignKey(DefaultAssetType, on_delete=models.CASCADE)
     default_asset_category = models.ForeignKey(DefaultAssetCategory, on_delete=models.CASCADE)
     default_asset_value = models.ForeignKey(DefaultAssetValue, on_delete=models.CASCADE)
+    company=models.ForeignKey(Company,default=1,related_name='assets',on_delete=CASCADE) # получить все активы компании - company.assets.all()
 
     def __str__(self):
         return self.name

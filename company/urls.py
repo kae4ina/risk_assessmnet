@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import company_create, company_saved
+from .views import company_create, company_saved, UserCompaniesView
 
 urlpatterns = [
     path('companycreate/', company_create, name='company_create'),
-    path('companysaved/',company_saved, name='company_saved')
+    path('companysaved/',company_saved, name='company_saved'),
+    path('my-companies/', UserCompaniesView.as_view(), name='my_companies'),
+
 ]

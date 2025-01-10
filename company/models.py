@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import ForeignKey, CASCADE
 from django.forms import CharField
@@ -14,4 +15,9 @@ class Company(models.Model):
     company_name=models.CharField(max_length=200)
     def __str__(self):
         return self.company_name
-# Create your models here.
+class CompanyUser(models.Model):
+    company=models.ForeignKey(Company, on_delete=CASCADE)
+    user=models.ForeignKey(User,on_delete=CASCADE)
+    def __str__(self):
+        return f"{self.user.username}-{self.company.company_name}"
+
