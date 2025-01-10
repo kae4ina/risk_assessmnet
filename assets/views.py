@@ -1,21 +1,26 @@
 import uuid
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 # assets/views.py
 
 from django.shortcuts import render, redirect
+
+from company.models import Company
 from .forms import AssetForm
 
 from assets.Asset import Asset
 from .models import DefaultAssetType, DefaultAssetModel
 from django.views.generic import ListView
 
+def assets_choose(request, company_id):
+    company = get_object_or_404(Company, id=company_id)  # Получаем компанию по ID
 
-def assets_choose(request):
     if request.method == 'POST':
         form = AssetForm(request.POST)
         if form.is_valid():
+            company_id = request.POST.get('company_id')  # Получаем company_id из формы
+            company = get_object_or_404(Company, id=company_id)  # Получаем компанию по ID
             # Получаем введенное значение нового типа актива
             new_asset_type = form.cleaned_data.get('new_asset_type')
             # Проверяем, если новое значение было введено
@@ -25,16 +30,20 @@ def assets_choose(request):
                 # Создаем экземпляр модели актива
                 asset = form.save(commit=False)
                 asset.default_asset_type = asset_type  # Присваиваем новый тип актива
+                asset.company = company  # Устанавливаем компанию
                 asset.save()  # Сохраняем актив
             else:
                 # Если новое значение не введено, просто сохраняем актив с выбранным типом
-                asset = form.save()
+                asset = form.save(commit=False)
+                asset.company = company  # Устанавливаем компанию
+                asset.save()
 
             return redirect('asset_saved')  # Замените на нужное представление после сохранения
     else:
         form = AssetForm()
 
-    return render(request, 'assets/assets_choose.html', {'form': form})
+    assets = company.assets.all()  # Получаем все активы компании
+    return render(request, 'assets/assets_choose.html', {'form': form, 'company': company, 'assets': assets})
 
 def asset_saved(request):
     return render(request, 'assets/asset_saved.html')

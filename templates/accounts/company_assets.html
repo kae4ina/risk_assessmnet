@@ -8,7 +8,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Активы компании {{ assets.first.company.company_name }}</h2>
+<h2>Активы компании {{ company.company_name }}</h2>
 <ul>
     {% for asset in assets %}
         <li>{{ asset.name }} - {{ asset.default_asset_value }}</li>
@@ -16,7 +16,15 @@
         <li>У этой компании нет активов.</li>
     {% endfor %}
 </ul>
-<a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
+ <button id="addAssetsBtn">Добавить активы</button>
+    <script>
+    document.getElementById("addAssetsBtn").onclick = function() {
+        window.location.href = "{% url 'assets_choose' company.id %}"; // Замените 'assets_choose' на имя вашего URL
+    };
+</script>
+    <p></p>
+<a href="{% url 'my_companies' %}">
+    Назад к моим компаниям</a>
 {% endblock %}
 </body>
 </html>
