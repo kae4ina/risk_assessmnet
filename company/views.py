@@ -9,14 +9,18 @@ from .models import CompanyUser
 @login_required
 def company_create(request):
     if request.method == 'POST':
-        form = CompanyForm(request.POST)
-        if form.is_valid():
-            form.save('company_saved')  # Сохранение данных в БД
-            return redirect('company_saved')  # Замените 'success_url' на нужный вам URL
+        form_company=CompanyForm(request.POST)
+        if form_company.is_valid():
+            company=form_company.save()
+            company_user=CompanyUser(company=company, user=request.user)
+            company_user.save()
+            return redirect('company_saved')
     else:
-        form = CompanyForm()
+        form_company = CompanyForm()
 
-    return render(request, 'company/company_create.html', {'form': form})
+
+
+    return render(request, 'company/company_create.html', {'form': form_company})
 
 def company_saved(request):
     return render(request,'company/company_saved.html')
@@ -25,8 +29,8 @@ def company_saved(request):
 
 class UserCompaniesView(LoginRequiredMixin, ListView):
     model = CompanyUser
-    template_name = 'accounts/user_companies.html'  # Укажите путь к вашему шаблону
-    context_object_name = 'company_users'  # Имя переменной в контексте
+    template_name = 'accounts/user_companies.html'
+    context_object_name = 'company_users'  
 
     def get_queryset(self):
         # Получаем все компании, связанные с текущим пользователем

@@ -1,6 +1,6 @@
 from django import forms
 
-from company.models import Company, DefaultCompanyArea
+from company.models import Company, DefaultCompanyArea, CompanyUser
 
 
 class CompanyForm(forms.ModelForm):
@@ -10,3 +10,6 @@ class CompanyForm(forms.ModelForm):
 
 
         default_company_area=forms.ModelChoiceField(queryset=DefaultCompanyArea.objects.all())
+
+
+
