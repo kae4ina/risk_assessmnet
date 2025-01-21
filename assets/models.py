@@ -25,7 +25,7 @@ class DefaultAssetType(models.Model):
         return self.default_asset_type
 
 
-class DefaultAssetModel(models.Model):
+class Asset(models.Model):
     name = models.CharField(max_length=255, null=True)
     #id устанавливается сам по умолчанию
     #тип актива - это DefaultAssetEnum,

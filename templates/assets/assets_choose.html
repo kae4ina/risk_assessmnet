@@ -6,7 +6,7 @@
     <title>Choose assets</title>
 </head>
 <body>
-
+<!--
  <h1>Активы</h1>
     <form method="POST">
         {% csrf_token %}
@@ -19,6 +19,17 @@
     </form>
              </div>
     </form>
+-->
+ <h1>Актив: {{ asset.name }}</h1>
 
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить</button>
+    </form>
+
+    <a href="{% url 'assets_choose' %}">Вернуться назад</a>
+    <a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
 </body>
 </html>

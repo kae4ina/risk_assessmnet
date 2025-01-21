@@ -1,13 +1,13 @@
 from django import forms
 
-from assets.Asset import Asset
-from assets.models import DefaultAssetType, DefaultAssetCategory, DefaultAssetValue, DefaultAssetModel
+#from assets.Asset import Asset
+from assets.models import DefaultAssetType, DefaultAssetCategory, DefaultAssetValue, Asset
 from company.models import Company
 
 
 class AssetForm(forms.ModelForm):
     class Meta:
-        model = DefaultAssetModel
+        model = Asset
         fields = ['name', 'default_asset_type', 'default_asset_category', 'default_asset_value','company']
 
 
