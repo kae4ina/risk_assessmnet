@@ -15,9 +15,11 @@ class Company(models.Model):
     company_name=models.CharField(max_length=200)
     def __str__(self):
         return self.company_name
+
 class CompanyUser(models.Model):
     company=models.ForeignKey(Company, on_delete=CASCADE)
     user=models.ForeignKey(User,on_delete=CASCADE)
-    def __str__(self):
-        return f"{self.user.username}-{self.company.company_name}"
 
+    def __str__(self):
+       return f"{self.user.username}-{self.company.company_name}"
+      # return f"{self.company.company_name}" #иначе отображается и полльзователь и компания
