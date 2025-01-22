@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threat create</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Добавить</button>
+</form>
+
+<script>
+    document.getElementById('id_company').addEventListener('change', function() {
+        var companyId = this.value;
+        fetch(`/load_assets/?company_id=${companyId}`)
+            .then(response => response.json())
+            .then(data => {
+                var assetSelect = document.getElementById('id_related_assets');
+                assetSelect.innerHTML = '';  // Очищаем текущие активы
+                data.forEach(asset => {
+                    var option = document.createElement('option');
+                    option.value = asset.id;
+                    option.text = asset.name;
+                    assetSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching assets:', error));
+    });
+</script>
+
+
+</body>
+</html>

@@ -29,6 +29,7 @@ urlpatterns = [
     #path('login/', views.login_view, name='login'),
     path('company/', include('company.urls')),
     path('vulnerability/', include('vulnerability.urls')),
+    path('threat/',include('threat.urls')),
 
 
 ]
