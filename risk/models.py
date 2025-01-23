@@ -1,23 +1,19 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import ForeignKey, CASCADE
+from django.db.models import CharField, ForeignKey, CASCADE
 
-from assets.models import Asset
+from threat.models import UserThreat
 
 
-class DefaultThreat(models.Model):
-    threat_name=models.CharField(max_length=150)
-
-class UserThreat(models.Model):
+class Risk(models.Model):
     name=models.CharField(max_length=150)
-    possability=models.FloatField(
+    exploit_possability=models.FloatField(
         validators=[
             MinValueValidator(0.0),  # Минимальное значение 0.0
             MaxValueValidator(100.0)  # Максимальное значение 100.0
         ]
     )
-    related_asset=ForeignKey(to=Asset, on_delete=CASCADE, default=1)
+    related_threat=ForeignKey(to=UserThreat, on_delete=CASCADE)
     def __str__(self):
         return self.name
-
 # Create your models here.
