@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "company",
     "vulnerability",
     "threat",
-    #"risk",
+    "risk",
 ]
 
 MIDDLEWARE = [

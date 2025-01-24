@@ -30,7 +30,7 @@ urlpatterns = [
     path('company/', include('company.urls')),
     path('vulnerability/', include('vulnerability.urls')),
     path('threat/',include('threat.urls')),
-   # path('risk/',include('risk.urls')),
+    path('risk/',include('risk.urls')),
 
 
 ]
