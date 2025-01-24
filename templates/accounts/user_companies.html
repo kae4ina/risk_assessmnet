@@ -22,6 +22,12 @@
     {% endfor %}
 </ul>
 <button id="addCompany">Добавить компанию</button>
+<br>
+<a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
+<br>
+    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
+<br>
+
 <script>
     document.getElementById("addCompany").onclick = function() {
         window.location.href = "{% url 'company_create' %}";
