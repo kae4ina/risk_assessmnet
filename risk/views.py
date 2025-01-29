@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 
 from assets.models import Asset
 from risk.forms import RiskForm
-from threat.models import UserThreat
+from threat.models import UserThreat, CompanyThreat
 
 
 def risk_create(request):
@@ -23,9 +23,13 @@ def risk_create(request):
     return render(request, 'risk/risk_create.html', context)
 
 def load_threat(request):
-    user_id = request.user.id
-    threats = UserThreat.objects.filter(user_id=user_id).values('id', 'name')
-    return JsonResponse(list(threats), safe=False)
+    asset_id = request.GET.get('asset_id')
+    company_id = request.GET.get('company_id')  # Получаем ID компании
+    threats = CompanyThreat.objects.filter(company_id=company_id, threat__related_asset_id=asset_id).select_related(
+        'threat')
+
+    data = [{'id': ct.threat.id, 'name': ct.threat.name} for ct in threats]
+    return JsonResponse(data, safe=False)
 
 def risk_saved(request):
     return render(request, 'risk/risk_saved.html')

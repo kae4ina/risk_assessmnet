@@ -3,18 +3,27 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 
 from assets.models import Asset
-from .models import UserThreat
+from .models import UserThreat, CompanyThreat
 from .forms import UserThreatForm
 from django.http import JsonResponse
 
 def threat_create_view(request):
     if request.method == 'POST':
-            form = UserThreatForm(request.POST, user=request.user)
-            if form.is_valid():
-                user_threat = form.save(commit=False)
-                user_threat.user=request.user
-                user_threat=form.save()
-                return redirect('threat_saved')
+        form = UserThreatForm(request.POST, user=request.user)
+        if form.is_valid():
+            # Сохраняем объект UserThreat, но не коммитим в базу данных
+            user_threat = form.save(commit=False)
+            user_threat.user = request.user  # Если у вас есть поле user в UserThreat
+            user_threat.save()  # Сохраняем объект UserThreat в базу данных
+
+            # Получаем ID компании из формы
+            company_id = form.cleaned_data['company'].id
+
+            # Создаем запись в таблице CompanyThreat
+            company_threat = CompanyThreat(company_id=company_id, threat=user_threat)
+            company_threat.save()  # Сохраняем объект CompanyThreat в базу данных
+
+            return redirect('threat_saved')
     else:
         form = UserThreatForm(user=request.user)
 

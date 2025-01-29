@@ -20,11 +20,28 @@
 <script>
 $(document).ready(function() {
     $('#id_company').change(function() {
-        var companyId = $(this).val();  //
+        var companyId = $(this).val();
         $.ajax({
-            url: '{% url "load_threat" %}',
+            url: '{% url "load_assets" %}',  // URL для загрузки активов
             data: {
-                'company_id': companyId  // Передаем ID компании, если это необходимо
+                'company_id': companyId
+            },
+            success: function(data) {
+                $('#id_related_asset').empty();  // Обновляем список активов
+                $('#id_related_asset').append('<option value="">Выберите актив</option>');
+                $.each(data, function(index, asset) {
+                    $('#id_related_asset').append('<option value="' + asset.id + '">' + asset.name + '</option>');
+                });
+            }
+        });
+    });
+
+    $('#id_related_asset').change(function() {
+        var assetId = $(this).val();
+        $.ajax({
+            url: '{% url "load_threat" %}',  // URL для загрузки угроз
+            data: {
+                'asset_id': assetId
             },
             success: function(data) {
                 $('#id_related_threat').empty();  // Обновляем список угроз
@@ -37,6 +54,5 @@ $(document).ready(function() {
     });
 });
 </script>
-
 </body>
 </html>
