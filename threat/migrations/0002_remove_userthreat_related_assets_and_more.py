@@ -13,10 +13,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='userthreat',
-            name='related_assets',
-        ),
+
         migrations.AddField(
             model_name='userthreat',
             name='possability',

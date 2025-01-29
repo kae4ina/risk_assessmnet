@@ -6,14 +6,14 @@ from risk.forms import RiskForm
 from threat.models import UserThreat
 
 
-def risk_create_view(request):
+def risk_create(request):
     if request.method == 'POST':
         form = RiskForm(request.POST)
         if form.is_valid():
             risk = form.save(commit=False)
             risk.user = request.user
             risk.save()
-            return redirect('threat_saved')
+            return redirect('risk_saved')
     else:
         form = RiskForm()
 
@@ -21,7 +21,7 @@ def risk_create_view(request):
         'form': form,
     }
 
-    return render(request, 'threat/threat_create.html', context)
+    return render(request, 'risk/risk_create.html', context)
 
 def load_threat(request):
     user_id = request.user.id
@@ -29,7 +29,7 @@ def load_threat(request):
     return JsonResponse(list(threats), safe=False)
 
 def risk_saved(request):
-    return render(request, 'threat/threat_saved.html')
+    return render(request, 'risk/risk_saved.html')
 
 
 # Create your views here.

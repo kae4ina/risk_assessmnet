@@ -11,6 +11,7 @@ class DefaultThreat(models.Model):
 class UserThreat(models.Model):
     name=models.CharField(max_length=150)
     possibility=models.FloatField(
+        default=50.00,
         validators=[
             MinValueValidator(0.0),  # Минимальное значение 0.0
             MaxValueValidator(100.0)  # Максимальное значение 100.0
