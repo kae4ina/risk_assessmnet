@@ -8,14 +8,13 @@ from threat.models import UserThreat
 
 def risk_create(request):
     if request.method == 'POST':
-        form = RiskForm(request.POST)
+        form = RiskForm(request.POST, user=request.user)
         if form.is_valid():
             risk = form.save(commit=False)
-            risk.user = request.user
             risk.save()
             return redirect('risk_saved')
     else:
-        form = RiskForm()
+        form = RiskForm(user=request.user)
 
     context = {
         'form': form,

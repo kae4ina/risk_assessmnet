@@ -10,8 +10,8 @@ class Risk(models.Model):
     name=models.CharField(max_length=150)
     exploit_possibility=models.FloatField(
         validators=[
-            MinValueValidator(0.0),  # Минимальное значение 0.0
-            MaxValueValidator(100.0)  # Максимальное значение 100.0
+            MinValueValidator(0.0),
+            MaxValueValidator(100.0)
         ]
     )
     related_threat=ForeignKey(to=UserThreat, on_delete=CASCADE)

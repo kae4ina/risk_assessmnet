@@ -10,16 +10,17 @@
 <form method="POST">
     {% csrf_token %}
     {{ form.name.label }} {{ form.name }}<br>
-    {{ form.exploit_possability.label }} {{ form.exploit_possability }}<br>
-    <input type="number" name="exploit_possibility" min="0" max="100" step="0.1" required>
-    {{ form.related_threat.label }} {{ form.related_threat }}<br>
+    {{ form.exploit_possibility.label }} {{ form.exploit_possibility }}<br>
+    <!--<input type="number" name="exploit_possibility" min="0" max="100" step="0.1" required>-->
     {{ form.related_company.label }} {{ form.related_company }}<br>
+    {{ form.related_threat.label }} {{ form.related_threat }}<br>
+
     <button type="submit">Создать риск</button>
 </form>
 <script>
 $(document).ready(function() {
     $('#id_company').change(function() {
-        var companyId = $(this).val();  // Предполагается, что это поле компании
+        var companyId = $(this).val();  //
         $.ajax({
             url: '{% url "load_threat" %}',
             data: {

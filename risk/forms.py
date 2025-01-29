@@ -11,10 +11,11 @@ class RiskForm(forms.ModelForm):
         fields = ['name','exploit_possibility', 'related_threat','related_company']
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Извлекаем пользователя из kwargs
+        user = kwargs.pop('user', None)
         super(RiskForm, self).__init__(*args, **kwargs)
         if user is not None:
             self.fields['related_company'].queryset = Company.objects.filter(companyuser__user=user)
+            print(self.fields['related_company'].queryset)
 
     """ def clean_exploit_possibility(self):
             value = self.cleaned_data.get('exploit_possibility')
