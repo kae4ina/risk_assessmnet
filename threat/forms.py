@@ -2,7 +2,6 @@ from django import forms
 
 from assets.models import Asset
 from company.models import Company, CompanyUser
-
 from .models import UserThreat
 
 class UserThreatForm(forms.ModelForm):
@@ -11,7 +10,8 @@ class UserThreatForm(forms.ModelForm):
 
     class Meta:
         model = UserThreat
-        fields = ['name', 'company', 'related_asset']
+        fields = ['name', 'company', 'possibility', 'related_asset']
+
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Извлекаем user из kwargs
@@ -25,5 +25,5 @@ class UserThreatForm(forms.ModelForm):
             # Теперь получаем реальные объекты Company
             self.fields['company'].queryset = Company.objects.filter(id__in=self.fields['company'].queryset)
 
-            # Активы для поля related_assets, которые будут привязаны к создаваемой UserThreat
+            # Активы для поля related_asset, которые будут привязаны к создаваемой UserThreat
             self.fields['related_asset'].queryset = Asset.objects.filter(company__in=self.fields['company'].queryset)

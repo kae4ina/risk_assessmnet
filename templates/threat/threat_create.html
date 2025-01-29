@@ -6,12 +6,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<h2>Добавить угрозу</h2>
+<h2>Добавить Угрозу</h2>
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Добавить угрозу</button>
+     {% csrf_token %}
+     {{ form.as_p }}
+    <button type="submit">Добавить</button>
 </form>
+
 
  <script>
     $(document).ready(function() {
@@ -33,7 +34,6 @@
         });
     });
 </script>
-
 
 
 </body>

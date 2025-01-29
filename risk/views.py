@@ -1,39 +1,35 @@
 from django.http import JsonResponse
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, redirect
 
 from assets.models import Asset
-from company.models import CompanyUser
+from risk.forms import RiskForm
 from threat.models import UserThreat
-from .forms import RiskForm
 
-def risk_create(request):
+
+def risk_create_view(request):
     if request.method == 'POST':
-        form = RiskForm(request.POST, user=request.user)
+        form = RiskForm(request.POST)
         if form.is_valid():
             risk = form.save(commit=False)
+            risk.user = request.user
             risk.save()
-            return redirect('risk/risk_saved')
+            return redirect('threat_saved')
     else:
-        form = RiskForm(user=request.user)
-    return render(request, 'risk/risk_create.html', {'form': form})
+        form = RiskForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'threat/threat_create.html', context)
+
+def load_threat(request):
+    user_id = request.user.id
+    threats = UserThreat.objects.filter(user_id=user_id).values('id', 'name')
+    return JsonResponse(list(threats), safe=False)
+
+def risk_saved(request):
+    return render(request, 'threat/threat_saved.html')
 
 
-def load_threats(request):
-
-        company_user_id = request.GET.get('company_id')
-        company_id=CompanyUser.objects.get(id=company_user_id).company_id
-
-        # получаем активы, связанные с данной компанией
-        assets = Asset.objects.filter(company_id=company_id)
-
-        # получаем угрозы, связанные с этими активами
-        threats = UserThreat.objects.filter(related_asset__in=assets)
-
-
-        threat_list = [{'id': threat.id, 'name': threat.name} for threat in threats]
-
-
-        return JsonResponse({'options': threat_list})
+# Create your views here.
