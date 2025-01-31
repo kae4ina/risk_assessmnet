@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "vulnerability",
     "threat",
     "risk",
-    #"measure",
+    "measure",
 ]
 
 MIDDLEWARE = [

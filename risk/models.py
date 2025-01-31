@@ -18,7 +18,7 @@ class Risk(models.Model):
     decision=ForeignKey(to=RiskDecision, null=True,on_delete=CASCADE)
     related_threat=ForeignKey(to=UserThreat, on_delete=CASCADE)
     related_vulnerability=ForeignKey(to=UserVulnerability,on_delete=CASCADE, default=12)
-    related_company=ForeignKey(to=Company, on_delete=CASCADE, default=4)
+    related_company=ForeignKey(to=Company, on_delete=CASCADE)
     def __str__(self):
         return self.name
 # Create your models here.

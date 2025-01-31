@@ -3,13 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Measure create</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <h1>Меры</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+<form method="post" id="risk-form">
+    {% csrf_token %}
+    <div>
+        {{ form.name.label }} {{ form.name }}<br>
+        {{ form.description.label }} {{ form.description }}<br>
+        {{ form.related_company.label }} {{ form.related_company }}<br>
+        <label for="risk-select">Related Risk:</label>
+        <select id="risk-select" name="related_risk" class="form-control">
+            <option value="">Select a risk</option>
+        </select>
+    </div>
+    <br>
+            <button type="submit">Создать меру</button>
+</form>
+
+
+<script>
+    $(document).ready(function() {
+
+        $('#id_related_company').change(function() {
+            var companyId = $(this).val();
+            $.ajax({
+                url: '{% url "get_risk" %}',
+                data: {
+                    'company_id': companyId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var riskSelect = $('#risk-select');
+                    riskSelect.empty();
+
+
+                    $.each(data, function(index, risk) {
+                        riskSelect.append($('<option></option>').attr('value', risk.id).text(risk.name));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching risks: ", error);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

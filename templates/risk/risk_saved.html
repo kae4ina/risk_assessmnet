@@ -7,5 +7,12 @@
 <body>
 <h1>Данные о рисках успешно внесены!</h1>
 <a href="">Все риски</a>
+<a href="{% url 'threat_create' %}">Перейти к выбору уязвимостей</a>
+<br>
+    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
+<br>
+    <a href="{% url 'risk_create' %}">Перейти к рискам</a>
+<br>
+    <a href="{% url 'measure_create' %}">Перейти к мерам</a>
 </body>
 </html>
