@@ -18,6 +18,26 @@
 
     <button type="submit">Создать риск</button>
 </form>
-
+<script>
+    $(document).ready(function() {
+        $('#id_related_company').change(function() {
+            var companyId = $(this).val();
+            $.ajax({
+                url: '{% url "load_threats" %}',  // Убедитесь, что у вас есть соответствующий URL
+                data: {
+                    'company_id': companyId
+                },
+                success: function(data) {
+                    $('#id_related_threat').empty();  // Очистить предыдущие угрозы
+                     $.each(data.threats, function(index, threat) {
+                        $('#id_related_threat').append(
+                            $('<option></option>').val(threat.id).text(threat.name)
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
