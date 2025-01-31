@@ -25,6 +25,8 @@
 <a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
 <br>
     <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
+<br>
+    <a href="{% url 'risk_create' %}">Перейти к рискам</a>
 <script>
     document.getElementById("addCompany").onclick = function() {
         window.location.href = "{% url 'company_create' %}";

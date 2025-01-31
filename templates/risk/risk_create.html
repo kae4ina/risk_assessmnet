@@ -7,37 +7,85 @@
 </head>
 <body>
  <h2>Добавить риск</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.name.label }} {{ form.name }}<br>
+<form method="post" id="risk-form">
+        {% csrf_token %}
+        <div>
+            {{ form.name.label }} {{ form.name }}<br>
+            {{ form.decision.label }} {{ form.decision }}<br>
+            {{ form.related_company.label }} {{ form.related_company }}<br>
+            <label for="related_asset">Выберите актив:</label>
+            <select id="related_asset" name="related_asset">
+                <option value="">Выберите актив</option>
+            </select><br>
+            <label for="related_threat">Выберите угрозу:</label>
+            <select id="related_threat" name="related_threat">
+                <option value="">Выберите угрозу</option>
+            </select><br>
+            <label for="related_vulnerability">Выберите уязвимость:</label>
+            <select id="related_vulnerability" name="related_vulnerability">
+                <option value="">Выберите уязвимость</option>
+            </select><br>
+            <button type="submit">Создать риск</button>
+        </div>
+    </form>
 
-    <!--<input type="number" name="exploit_possibility" min="0" max="100" step="0.1" required>-->
-    {{ form.related_company.label }} {{ form.related_company }}<br>
-    {{ form.decision.label }} {{ form.decision }}<br>
-    {{ form.related_threat.label }} {{ form.related_threat }}<br>
+    <script>
+        $(document).ready(function() {
+            // Обработчик изменения компании
+            $('#id_related_company').change(function() {
+                var companyId = $(this).val();
+                $('#related_asset').empty().append('<option value="">Выберите актив</option>');
+                $('#related_threat').empty().append('<option value="">Выберите угрозу</option>');
+                $('#related_vulnerability').empty().append('<option value="">Выберите уязвимость</option>');
 
-    <button type="submit">Создать риск</button>
-</form>
-<script>
-    $(document).ready(function() {
-        $('#id_related_company').change(function() {
-            var companyId = $(this).val();
-            $.ajax({
-                url: '{% url "load_threats" %}',  // Убедитесь, что у вас есть соответствующий URL
-                data: {
-                    'company_id': companyId
-                },
-                success: function(data) {
-                    $('#id_related_threat').empty();  // Очистить предыдущие угрозы
-                     $.each(data.threats, function(index, threat) {
-                        $('#id_related_threat').append(
-                            $('<option></option>').val(threat.id).text(threat.name)
-                        );
+                if (companyId) {
+                    $.ajax({
+                        url: "{% url 'get_assets' %}",
+                        data: {
+                            'company_id': companyId
+                        },
+                        success: function(data) {
+                            $.each(data.assets, function(index, asset) {
+                                $('#related_asset').append(
+                                    $('<option></option>').val(asset.id).text(asset.name)
+                                );
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Обработчик изменения актива
+            $('#related_asset').change(function() {
+                var assetId = $(this).val();
+                $('#related_threat').empty().append('<option value="">Выберите угрозу</option>');
+                $('#related_vulnerability').empty().append('<option value="">Выберите уязвимость</option>');
+
+                if (assetId) {
+                    $.ajax({
+                        url: "{% url 'get_threats_and_vulnerabilities' %}",
+                        data: {
+                            'asset_id': assetId
+                        },
+                        success: function(data) {
+                            $.each(data.threats, function(index, threat) {
+                                $('#related_threat').append(
+                                    $('<option></option>').val(threat.id).text(threat.name)
+                                );
+                            });
+                            $.each(data.vulnerabilities, function(index, vulnerability) {
+                                $('#related_vulnerability').append(
+                                    $('<option></option>').val(vulnerability.id).text(vulnerability.name)
+                                );
+                            });
+                        }
                     });
                 }
             });
         });
-    });
-</script>
+    </script>
+</body>
+</html>
+
 </body>
 </html>
