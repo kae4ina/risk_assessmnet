@@ -10,49 +10,14 @@
 <form method="POST">
     {% csrf_token %}
     {{ form.name.label }} {{ form.name }}<br>
-    {{ form.exploit_possibility.label }} {{ form.exploit_possibility }}<br>
+
     <!--<input type="number" name="exploit_possibility" min="0" max="100" step="0.1" required>-->
     {{ form.related_company.label }} {{ form.related_company }}<br>
+    {{ form.decision.label }} {{ form.decision }}<br>
     {{ form.related_threat.label }} {{ form.related_threat }}<br>
 
     <button type="submit">Создать риск</button>
 </form>
-<script>
-$(document).ready(function() {
-    $('#id_company').change(function() {
-        var companyId = $(this).val();
-        $.ajax({
-            url: '{% url "load_assets" %}',  // URL для загрузки активов
-            data: {
-                'company_id': companyId
-            },
-            success: function(data) {
-                $('#id_related_asset').empty();  // Обновляем список активов
-                $('#id_related_asset').append('<option value="">Выберите актив</option>');
-                $.each(data, function(index, asset) {
-                    $('#id_related_asset').append('<option value="' + asset.id + '">' + asset.name + '</option>');
-                });
-            }
-        });
-    });
 
-    $('#id_related_asset').change(function() {
-        var assetId = $(this).val();
-        $.ajax({
-            url: '{% url "load_threat" %}',  // URL для загрузки угроз
-            data: {
-                'asset_id': assetId
-            },
-            success: function(data) {
-                $('#id_related_threat').empty();  // Обновляем список угроз
-                $('#id_related_threat').append('<option value="">Выберите угрозу</option>');
-                $.each(data, function(index, threat) {
-                    $('#id_related_threat').append('<option value="' + threat.id + '">' + threat.name + '</option>');
-                });
-            }
-        });
-    });
-});
-</script>
 </body>
 </html>

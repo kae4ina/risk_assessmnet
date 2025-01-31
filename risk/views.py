@@ -8,28 +8,13 @@ from threat.models import UserThreat, CompanyThreat
 
 def risk_create(request):
     if request.method == 'POST':
-        form = RiskForm(request.POST, user=request.user)
+        form = RiskForm(request.POST)
         if form.is_valid():
-            risk = form.save(commit=False)
-            risk.save()
-            return redirect('risk_saved')
+            form.save()
+            # Перенаправление или отображение сообщения об успехе
     else:
-        form = RiskForm(user=request.user)
-
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'risk/risk_create.html', context)
-
-def load_threat(request):
-    asset_id = request.GET.get('asset_id')
-    company_id = request.GET.get('company_id')  # Получаем ID компании
-    threats = CompanyThreat.objects.filter(company_id=company_id, threat__related_asset_id=asset_id).select_related(
-        'threat')
-
-    data = [{'id': ct.threat.id, 'name': ct.threat.name} for ct in threats]
-    return JsonResponse(data, safe=False)
+        form = RiskForm()
+    return render(request, 'risk/risk_create.html', {'form': form})
 
 def risk_saved(request):
     return render(request, 'risk/risk_saved.html')
