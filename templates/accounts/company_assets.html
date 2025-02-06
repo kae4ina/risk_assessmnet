@@ -13,17 +13,47 @@
 <h2>Активы компании {{ assets.first.company.company_name }}</h2>
 <ul>
     {% for asset in assets %}
-        <li>{{ asset.name }} - {{ asset.default_asset_value }}</li>
+        <li>
+            <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
+
+            <!-- Отображение уязвимостей для актива -->
+            <h4>Уязвимости:</h4>
+            <ul>
+                {% for vulnerability in asset.uservulnerability_set.all %}
+                    <li>
+                        {{ vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability.exploit_possibility }}%
+                    </li>
+                {% empty %}
+                    <li>Для этого актива нет уязвимостей.</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Отображение угроз для актива -->
+            <h4>Угрозы:</h4>
+            <ul>
+                {% for threat in asset.userthreat_set.all %}
+                    <li>
+                        {{ threat.name }} - Вероятность: {{ threat.possibility }}%
+                    </li>
+                {% empty %}
+                    <li>Для этого актива нет угроз.</li>
+                {% endfor %}
+            </ul>
+        </li>
     {% empty %}
         <li>У этой компании нет активов.</li>
     {% endfor %}
+</ul>
+
+
+
     <button id="addAsset">Добавить активы</button>
     <script>
     document.getElementById("addAsset").onclick = function() {
         window.location.href = "{% url 'assets_choose' %}";
     };
 </script>
-</ul>
+
 <a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
 <br>
 <a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>

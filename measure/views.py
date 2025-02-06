@@ -1,7 +1,7 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
-from company.models import CompanyUser
+from company.models import CompanyUser, Company
 from measure.froms import UserMeasureForm
 from risk.models import Risk
 
@@ -30,3 +30,11 @@ def get_risk(request):
 
 def measure_saved(request):
     return render(request, 'measure/measure_saved.html')
+
+def risk_measure(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    risks = Risk.objects.filter(related_company=company)
+    return render(request, 'risk_measure.html', {
+        'company': company,
+        'risks': risks,
+    })
