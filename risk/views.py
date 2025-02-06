@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from assets.models import Asset
 from risk.forms import RiskForm
@@ -44,4 +44,8 @@ class CompanyRiskView(LoginRequiredMixin, ListView):
         # Получаем ID компании из URL и извлекаем ее активы
         company_id = self.kwargs['company_id']
         return Risk.objects.filter(related_company_id=company_id)
+
+def risk_detail_view(request, risk_id):
+    risk = get_object_or_404(Risk, id=risk_id)
+    return render(request, 'company_risk.html', {'risk': risk})
 # Create your views here.

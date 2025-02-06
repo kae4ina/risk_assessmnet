@@ -24,9 +24,9 @@
 
                     <h4>Меры по управлению риском:</h4>
                     <ul>
-                        {% for measure in risk.usermmeasure_set.all %}
+                        {% for measure in risk.usermeasure_set.all %}
                             <li>
-                                <strong>{{ measure.name }}</strong> - {{ measure.description }}
+                                <strong>{{ measure.name }}</strong>
                             </li>
                         {% empty %}
                             <li>Нет мер по управлению риском.</li>
@@ -39,7 +39,10 @@
         <li>У этой компании нет рисков.</li>
     {% endfor %}
 </ul>
-
+<br>
+    <a href="{% url 'risk_create' %}">Перейти к созданию рисквов</a>
+     <br>
+    <a href="{% url 'measure_create' %}">Перейти к созданию мер</a>
 <script>
     function toggleRiskDetails(riskId, caretElement) {
         const detailsDiv = document.getElementById('risk-details-' + riskId);

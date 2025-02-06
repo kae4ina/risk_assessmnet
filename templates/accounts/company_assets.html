@@ -118,14 +118,17 @@
         window.location.href = "{% url 'assets_choose' %}";
     };
 </script>
-
+<br>
+<a href="{% url 'company_risk' company_id=assets.first.company.id %}">
+                Перейти к рискам компании
+            </a>
+<br>
 <a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
 <br>
-<a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
+<a href="{% url 'vulnerability_create' %}">Перейти к созданию уязвимостей</a>
 <br>
-    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
-<br>
-    <a href="{% url 'risk_create' %}">Перейти к рискам</a>
+    <a href="{% url 'threat_create' %}">Перейти к созданию угроз</a>
+
 <br>
 
 
