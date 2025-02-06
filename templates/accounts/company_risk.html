@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Риски компании</title>
+</head>
+<body>
+     <h2>Риски компании {{ risks.first.company.company_name }}</h2>
+<ul style="list-style-type: none; padding: 0;">
+    {% for risk in risks %}
+        <li style="margin-bottom: 20px;">
+            <div class="risk-container">
+                <strong>{{ risk.name }}</strong>
+                <span class="risk-caret" onclick="toggleRiskDetails('{{ risk.id }}', this)"></span>
+
+                <!-- Скрытые детали для риска -->
+                <div id="risk-details-{{ risk.id }}" class="risk-details" style="display: none;">
+                    <h4>Решение:</h4>
+                    <p>{{ risk.decision }}</p>
+                    <h4>Угрозы:</h4>
+                    <p>{{ risk.related_threat }}</p>
+                    <h4>Уязвимости:</h4>
+                    <p>{{ risk.related_vulnerability }}</p>
+
+                    <h4>Меры по управлению риском:</h4>
+                    <ul>
+                        {% for measure in risk.usermmeasure_set.all %}
+                            <li>
+                                <strong>{{ measure.name }}</strong> - {{ measure.description }}
+                            </li>
+                        {% empty %}
+                            <li>Нет мер по управлению риском.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+    {% empty %}
+        <li>У этой компании нет рисков.</li>
+    {% endfor %}
+</ul>
+
+<script>
+    function toggleRiskDetails(riskId, caretElement) {
+        const detailsDiv = document.getElementById('risk-details-' + riskId);
+        const isVisible = detailsDiv.style.display === 'block';
+
+        // Меняем видимость деталей
+        detailsDiv.style.display = isVisible ? 'none' : 'block';
+
+        // Меняем направление стрелки
+        if (isVisible) {
+            caretElement.classList.remove('down');
+        } else {
+            caretElement.classList.add('down');
+        }
+    }
+</script>
+     <style>
+     /* Стили для контейнера рисков */
+.risk-container {
+    border: 2px solid #007BFF; /* Цвет рамки */
+    border-radius: 10px; /* Округлые края */
+    padding: 15px; /* Отступы внутри контейнера */
+    background-color: #f9f9f9; /* Цвет фона */
+    transition: all 0.3s ease; /* Плавный переход */
+    position: relative; /* Для позиционирования стрелки */
+}
+
+/* Стили для стрелки */
+.risk-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 10px; /* Увеличение размера стрелки */
+    border-color: #007BFF transparent transparent transparent; /* Цвет стрелки */
+    cursor: pointer;
+    margin-left: 10px;
+    transition: transform 0.3s ease; /* Плавный переход для поворота стрелки */
+}
+
+/* Поворот стрелки при открытии деталей */
+.risk-caret.down {
+    transform: rotate(180deg); /* Поворот стрелки */
+}
+
+/* Стили для деталей риска */
+.risk-details {
+    margin-top: 10px; /* Отступ сверху для деталей */
+    padding: 10px; /* Отступы внутри деталей */
+    border: 1px solid #ddd; /* Цвет рамки деталей */
+    border-radius: 5px; /* Округлые края для деталей */
+    background-color: #fff; /* Цвет фона для деталей */
+}
+
+/* Дополнительные стили для элементов списка */
+ul {
+    list-style-type: none; /* Убираем маркеры списка */
+    padding: 0; /* Убираем отступы */
+}
+
+/* Стили для заголовков внутри деталей */
+h4 {
+    margin: 10px 0 5px; /* Отступы для заголовков */
+    color: #333; /* Цвет заголовков */
+}
+
+/* Стили для текста внутри деталей */
+p {
+    margin: 5px 0; /* Отступы для абзацев */
+    color: #555; /* Цвет текста */
+}
+</style>
+
+</body>
+</html>

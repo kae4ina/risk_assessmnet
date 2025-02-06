@@ -1,10 +1,15 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render, redirect
+
+from measure.models import UserMeasure
+from risk.models import Risk
 from .forms import CompanyForm
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import CompanyUser
+from .models import CompanyUser, Company
+
 
 @login_required
 def company_create(request):
@@ -35,6 +40,10 @@ class UserCompaniesView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Получаем все компании, связанные с текущим пользователем
         return CompanyUser .objects.filter(user=self.request.user)
+
+
+
+
 
 # Create your views here.
 # при создании компании надо создавать запись в таблице CompanyUser~

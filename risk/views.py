@@ -1,10 +1,13 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from assets.models import Asset
 from risk.forms import RiskForm
+from risk.models import Risk
 from threat.models import UserThreat, CompanyThreat
 from vulnerability.models import UserVulnerability
+from django.views.generic import ListView
 
 
 def risk_create(request):
@@ -32,5 +35,13 @@ def get_threats_and_vulnerabilities(request):
     vulnerabilities = UserVulnerability.objects.filter(related_asset_id=asset_id).values('id', 'name')
     return JsonResponse({'threats': list(threats), 'vulnerabilities': list(vulnerabilities)})
 
+class CompanyRiskView(LoginRequiredMixin, ListView):
+    model = Risk
+    template_name = 'accounts/company_risk.html'
+    context_object_name = 'risks'
 
+    def get_queryset(self):
+        # Получаем ID компании из URL и извлекаем ее активы
+        company_id = self.kwargs['company_id']
+        return Risk.objects.filter(related_company_id=company_id)
 # Create your views here.

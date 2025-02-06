@@ -9,42 +9,107 @@
 {% extends "base.html" %}
 
 {% block content %}
+ <p><strong>Название компании:</strong> {{ assets.first.company.company_name }}</p>
+ <p><strong>Область компании:</strong> {{ assets.first.company.default_company_area }}</p>
 
-<h2>Активы компании {{ assets.first.company.company_name }}</h2>
-<ul>
-    {% for asset in assets %}
-        <li>
-            <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
+<div class="container">
+    <div class="left-column">
+        <h2>Активы компании {{ risk.first.company.company_name }}</h2>
+        <ul style="list-style-type: none; padding: 0;">
+            {% for asset in assets %}
+                <li style="margin-bottom: 20px;">
+                    <div class="asset-container">
+                        <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
+                        <span class="caret" onclick="toggleDetails('{{ asset.id }}')"></span>
 
-            <!-- Отображение уязвимостей для актива -->
-            <h4>Уязвимости:</h4>
-            <ul>
-                {% for vulnerability in asset.uservulnerability_set.all %}
-                    <li>
-                        {{ vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability.exploit_possibility }}%
-                    </li>
-                {% empty %}
-                    <li>Для этого актива нет уязвимостей.</li>
-                {% endfor %}
-            </ul>
+                        <!-- Скрытые детали для актива -->
+                        <div id="details-{{ asset.id }}" class="asset-details" style="display: none;">
+                            <h4>Информация об активе:</h4>
+                            <p><strong>Тип актива:</strong> {{ asset.default_asset_type }}</p>
+                            <p><strong>Категория актива:</strong> {{ asset.default_asset_category }}</p>
+                            <p><strong>Значение актива:</strong> {{ asset.default_asset_value }}</p>
 
-            <!-- Отображение угроз для актива -->
-            <h4>Угрозы:</h4>
-            <ul>
-                {% for threat in asset.userthreat_set.all %}
-                    <li>
-                        {{ threat.name }} - Вероятность: {{ threat.possibility }}%
-                    </li>
-                {% empty %}
-                    <li>Для этого актива нет угроз.</li>
-                {% endfor %}
-            </ul>
-        </li>
-    {% empty %}
-        <li>У этой компании нет активов.</li>
-    {% endfor %}
-</ul>
+                            <h4>Уязвимости:</h4>
+                            <ul>
+                                {% for vulnerability in asset.uservulnerability_set.all %}
+                                    <li>
+                                        {{ vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability.exploit_possibility }}%
+                                    </li>
+                                {% empty %}
+                                    <li>Для этого актива нет уязвимостей.</li>
+                                {% endfor %}
+                            </ul>
 
+                            <h4>Угрозы:</h4>
+                            <ul>
+                                {% for threat in asset.userthreat_set.all %}
+                                    <li>
+                                        {{ threat.name }} - Вероятность: {{ threat.possibility }}%
+                                    </li>
+                                {% empty %}
+                                    <li>Для этого актива нет угроз.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li>У этой компании нет активов.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+</div>
+
+
+<script>
+    function toggleDetails(assetId) {
+        const detailsDiv = document.getElementById('details-' + assetId);
+        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleRiskDetails(riskId) {
+        const detailsDiv = document.getElementById('risk-details-' + riskId);
+        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+
+<style>
+    .asset-container {
+        border: 2px solid #007BFF; /* Цвет рамки */
+        border-radius: 10px; /* Округлые края */
+        padding: 15px; /* Отступы внутри контейнера */
+        background-color: #f9f9f9; /* Цвет фона */
+        transition: all 0.3s ease; /* Плавный переход */
+        position: relative; /* Для позиционирования стрелки */
+    }
+
+    .caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 10px 0 10px; /* Увеличение размера стрелки */
+        border-color: #007BFF transparent transparent transparent; /* Цвет стрелки */
+        cursor: pointer;
+        margin-left: 10px;
+        transition: transform 0.3s ease; /* Плавный переход для поворота стрелки */
+    }
+
+    .caret.down {
+        transform: rotate(180deg); /* Поворот стрелки при открытии */
+    }
+
+    .asset-details {
+        margin-top: 10px; /* Отступ сверху для деталей */
+        padding: 10px; /* Отступы внутри деталей */
+        border: 1px solid #ddd; /* Цвет рамки деталей */
+        border-radius: 5px; /* Округлые края для деталей */
+        background-color: #fff; /* Цвет фона для деталей */
+    }
+</style>
 
 
     <button id="addAsset">Добавить активы</button>
@@ -61,6 +126,7 @@
     <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
 <br>
     <a href="{% url 'risk_create' %}">Перейти к рискам</a>
+<br>
 
 
 

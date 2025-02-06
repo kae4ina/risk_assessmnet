@@ -1,6 +1,8 @@
 # assets/urls.py
 from django.template.defaulttags import url
 from django.urls import path
+
+from risk.views import CompanyRiskView
 from . import views
 from .views import asset_saved, CompanyAssetsView
 

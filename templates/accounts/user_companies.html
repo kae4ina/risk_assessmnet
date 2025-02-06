@@ -5,9 +5,6 @@
     <title>MyCompanies</title>
 </head>
 <body>
-<!-- templates/accounts/user_companies.html -->
-{% extends "base.html" %}
-
 {% block content %}
 <h2>Мои компании</h2>
 <ul>
@@ -16,17 +13,27 @@
             <a href="{% url 'company_assets' company_id=company_user.company.id %}">
                 {{ company_user.company.company_name }}
             </a>
+            <br>
+            <a href="{% url 'company_risk' company_id=company_user.company.id %}">
+                Перейти к рискам
+            </a>
         </li>
     {% empty %}
         <li>У вас нет компаний.</li>
     {% endfor %}
 </ul>
-<button id="addCompany">Добавить компанию</button>
+
+<br>
+<button id="addCompany">Добавить компанию</button><br>
 <a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
 <br>
-    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
+<a href="{% url 'threat_create' %}">Перейти к угрозам</a>
 <br>
-    <a href="{% url 'risk_create' %}">Перейти к рискам</a>
+<a href="{% url 'risk_create' %}">Перейти к созданию рисков</a>
+<br>
+<a href="{% url 'measure_create' %}">Перейти к созданию мер</a>
+<br>
+
 <script>
     document.getElementById("addCompany").onclick = function() {
         window.location.href = "{% url 'company_create' %}";
