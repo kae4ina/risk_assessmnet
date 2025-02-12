@@ -2,18 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Company create</title>
+    <title>Создание компании</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Шрифт для текста */
+            background-color: #f4f4f4; /* Фоновый цвет страницы */
+            margin: 0;
+            padding: 20px; /* Отступы для всего тела */
+        }
+
+        h1 {
+            text-align: center; /* Центрируем заголовок */
+            color: #333; /* Цвет заголовка */
+        }
+
+        form {
+            background-color: #fff; /* Белый фон для формы */
+            padding: 20px; /* Отступы внутри формы */
+            border-radius: 5px; /* Закругленные углы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
+            max-width: 500px; /* Максимальная ширина формы */
+            margin: 20px auto; /* Центрируем форму */
+        }
+
+        button {
+            background-color: #28a745; /* Цвет кнопки */
+            color: white; /* Цвет текста кнопки */
+            border: none; /* Убираем границу */
+            padding: 10px 15px; /* Отступы внутри кнопки */
+            border-radius: 5px; /* Закругленные углы */
+            cursor: pointer; /* Указатель при наведении */
+            font-size: 16px; /* Размер шрифта */
+            transition: background-color 0.3s; /* Плавный переход цвета */
+        }
+
+        button:hover {
+            background-color: #218838; /* Цвет кнопки при наведении */
+        }
+
+        a {
+            display: inline-block; /* Делаем ссылки блочными элементами */
+            margin: 10px 0; /* Отступы сверху и снизу */
+            color: #007bff; /* Цвет ссылок */
+            text-decoration: none; /* Убираем подчеркивание */
+            font-size: 16px; /* Размер шрифта */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Подчеркивание при наведении */
+        }
+    </style>
 </head>
 <body>
-<h1>Мои компании</h1>
+   <h1>Мои компании</h1>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <button type="submit">Отправить</button>
     </form>
-<br>
-    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
-<br>
-    <a href="{% url 'risk_create' %}">Перейти к рискам</a>
+    <br>
+    <a href="{% url 'assets_choose' %}">Перейти к созданию активов</a>
+
+    <br>
+    <a href="{% url 'vulnerability_create' %}">Перейти к созданию уязвимостей</a>
+    <br>
+    <a href="{% url 'threat_create' %}">Перейти к созданию угроз</a>
+    <br>
+    <a href="{% url 'risk_create' %}">Перейти к созданию рисков</a>
+    <br>
+    <a href="{% url 'measure_create' %}">Перейти к созданию мер</a>
 </body>
 </html>

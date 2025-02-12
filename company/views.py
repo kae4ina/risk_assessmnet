@@ -28,7 +28,7 @@ def company_create(request):
     return render(request, 'company/company_create.html', {'form': form_company})
 
 def company_saved(request):
-    return render(request,'company/company_saved.html')
+    return render(request,'accounts/user_companies.html')
 
 
 

@@ -22,11 +22,14 @@
                     <h4>Уязвимости:</h4>
                     <p>{{ risk.related_vulnerability }}</p>
 
+                    <h4>Вероятность реализации риска:</h4>
+                        <p>{{ risk.risk_probability|floatformat:2 }}%</p>
+
                     <h4>Меры по управлению риском:</h4>
                     <ul>
                         {% for measure in risk.usermeasure_set.all %}
                             <li>
-                                <strong>{{ measure.name }}</strong>
+                                <p>{{ measure.name }}</p>
                             </li>
                         {% empty %}
                             <li>Нет мер по управлению риском.</li>

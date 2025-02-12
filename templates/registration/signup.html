@@ -2,20 +2,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none; /* Скрываем по умолчанию */
+        }
+    </style>
 </head>
 <body>
-    {% extends "base.html" %}
 
-{% block title %}Sign Up{% endblock %}
 
-{% block content %}
-<h2>Sign up</h2>
 <form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <button type="submit">Sign Up</button>
+    {% csrf_token %}
+    <h2>Sign Up</h2>
+    {{ form.as_p }}  <!-- Отображаем форму без требований к паролю -->
+    <button type="submit">Sign Up</button>
 </form>
-{% endblock %}
+
+<script>
+    const passwordInput = document.querySelector('input[type="password"]');
+    const passwordRequirements = document.getElementById('passwordRequirements');
+
+    passwordInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+        const isValid = validatePassword(password);
+
+        if (!isValid) {
+            passwordRequirements.style.display = 'block'; // Показываем требования
+        } else {
+            passwordRequirements.style.display = 'none'; // Скрываем требования
+        }
+    });
+
+    function validatePassword(password) {
+        // Условие: пароль должен содержать минимум 8 символов, одну заглавную букву и одну цифру
+        const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        return regex.test(password);
+    }
+</script>
+
 </body>
 </html>

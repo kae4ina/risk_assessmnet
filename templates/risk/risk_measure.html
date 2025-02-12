@@ -17,6 +17,7 @@
                 <li>Связанная угроза: {{ risk.related_threat.name }}</li>
                 <li>Связанная уязвимость: {{ risk.related_vulnerability.name }}</li>
                 <li>Решение: {{ risk.decision.name|default:"Не указано" }}</li>
+                <li>Вероятность реализации риска: {{ risk.risk_probability|floatformat:2 }}%</li>
             </ul>
 
             <!-- Отображение мер для риска -->

@@ -21,4 +21,13 @@ class Risk(models.Model):
     related_company=ForeignKey(to=Company, on_delete=CASCADE)
     def __str__(self):
         return self.name
+
+
+    @property
+    def risk_probability(self):
+        # Получаем значения вероятностей
+        exploit_possibility = self.related_vulnerability.exploit_possibility
+        possibility = self.related_threat.possibility
+        # Вычисляем среднее арифметическое
+        return (exploit_possibility + possibility) / 2
 # Create your models here.
