@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "threat",
     "risk",
     "measure",
+    "task",
 ]
 
 MIDDLEWARE = [
