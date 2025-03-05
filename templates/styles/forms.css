@@ -1,28 +1,4 @@
-<!--Возможность пользователем добавлять сови значения-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Choose assets</title>
-
-</head>
-<body>
-<!--
- <h1>Активы</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <div>
-            <h1>Create Default Asset</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-             </div>
-    </form>
--->
-<style>
-    /* Общие стили для body */
+/* Общие стили для body */
 body {
     font-family: Arial, sans-serif; /* Шрифт для текста */
     background-color: #f4f4f4; /* Цвет фона страницы */
@@ -76,22 +52,3 @@ a {
 a:hover {
     text-decoration: underline; /* Подчеркивание при наведении */
 }
-
-</style>
-
- <h1>Актив: {{ asset.name }}</h1>
-
-
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Добавить</button>
-    </form>
-
-    <a href="{% url 'assets_choose' %}">Вернуться назад</a>
-    <a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
-<br>
-<a href="{% url 'threat_create' %}">Перейти к угрозам</a>
-</body>
-</html>

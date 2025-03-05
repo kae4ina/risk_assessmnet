@@ -74,6 +74,7 @@ TEMPLATES = [
         },
     },
 ]
+STATIC_URL = '/static/'
 
 WSGI_APPLICATION = 'django_auth.wsgi.application'
 
