@@ -9,12 +9,12 @@
 {% extends "base.html" %}
 
 {% block content %}
- <p><strong>Название компании:</strong> {{ assets.first.company.company_name }}</p>
- <p><strong>Область компании:</strong> {{ assets.first.company.default_company_area }}</p>
+<p><strong>Название компании:</strong> {{ assets.first.company.company_name }}</p>
+<p><strong>Область компании:</strong> {{ assets.first.company.default_company_area }}</p>
 
 <div class="container">
     <div class="left-column">
-        <h2>Активы компании {{ risk.first.company.company_name }}</h2>
+        <h2>Активы компании {{ assets.first.company.company_name }}</h2>
         <ul style="list-style-type: none; padding: 0;">
             {% for asset in assets %}
                 <li style="margin-bottom: 20px;">
@@ -31,9 +31,9 @@
 
                             <h4>Уязвимости:</h4>
                             <ul>
-                                {% for vulnerability in asset.uservulnerability_set.all %}
+                                {% for vulnerability_asset in asset.user_vulnerabilities %}
                                     <li>
-                                        {{ vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability.exploit_possibility }}%
+                                        {{ vulnerability_asset.vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability_asset.vulnerability.exploit_possibility }}%
                                     </li>
                                 {% empty %}
                                     <li>Для этого актива нет уязвимостей.</li>
@@ -58,9 +58,8 @@
             {% endfor %}
         </ul>
     </div>
-
-
 </div>
+
 
 
 <script>

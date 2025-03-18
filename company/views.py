@@ -3,8 +3,10 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.shortcuts import render, redirect
 
+from assets.models import Asset
 from measure.models import UserMeasure
 from risk.models import Risk
+from vulnerability.models import UserVulnerabilityAsset
 from .forms import CompanyForm
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -43,10 +45,15 @@ class UserCompaniesView(LoginRequiredMixin, ListView):
 
 
 def company_assets(request, company_id):
-    company = get_object_or_404(Company, id=company_id)
-    assets = company.assets.all()  # Получаем все активы компании
-    return render(request, 'accounts/company_assets.html', {'company': company, 'assets': assets})
+    assets = Asset.objects.filter(company_id=company_id)
 
+
+    for asset in assets:
+        asset.user_vulnerabilities = UserVulnerabilityAsset.objects.filter(asset=asset).select_related('vulnerability')
+
+    context = {
+        'assets': assets,
+    }
+    return render(request, 'accounts/company_assets.html', context)
 
 # Create your views here.
-# при создании компании надо создавать запись в таблице CompanyUser~
