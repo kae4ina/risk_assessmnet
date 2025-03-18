@@ -8,7 +8,13 @@ from risk.models import Risk
 class UserMeasureForm(forms.ModelForm):
     class Meta:
         model=UserMeasure
-        fields=['name','description','related_risk', 'related_company']  # Добавляем поле компании
+        fields=['name','description','related_risk', 'related_company']
+        labels={
+            "name":"Мера",
+            "description": "Описание",
+            "related_risk": "Связанный риск",
+            "related_company": "Компания"
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

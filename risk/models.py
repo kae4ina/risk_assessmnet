@@ -23,6 +23,22 @@ class Risk(models.Model):
         return self.name
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @property
     def risk_probability(self):
         # Получаем значения вероятностей

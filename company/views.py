@@ -42,7 +42,10 @@ class UserCompaniesView(LoginRequiredMixin, ListView):
         return CompanyUser .objects.filter(user=self.request.user)
 
 
-
+def company_assets(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    assets = company.assets.all()  # Получаем все активы компании
+    return render(request, 'accounts/company_assets.html', {'company': company, 'assets': assets})
 
 
 # Create your views here.

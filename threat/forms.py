@@ -11,6 +11,13 @@ class UserThreatForm(forms.ModelForm):
     class Meta:
         model = UserThreat
         fields = ['name', 'company', 'possibility', 'related_asset']
+        labels={
+            "name":"Название угрозы",
+            "company": "Компания",
+            "possibility": "Вероятность реализации угрозы",
+            "related_asset": "Связанные активы",
+
+        }
 
 
     def __init__(self, *args, **kwargs):

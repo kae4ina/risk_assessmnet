@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>MyCompanies</title>
 </head>
+
 <body>
 {% block content %}
 <h2>Мои компании</h2>
@@ -19,29 +20,27 @@
             </a>
         </li>
     {% empty %}
-        <li>У вас нет компаний.</li>
+        <li>У вас нет компаний </li>
     {% endfor %}
 </ul>
 
-<br>
-<button id="addCompany">Добавить компанию</button><br>
-<a href="{% url 'vulnerability_create' %}">Перейти к созданию уязвимостей</a>
-<br>
-<a href="{% url 'threat_create' %}">Перейти к созданию угроз</a>
-<br>
-<a href="{% url 'risk_create' %}">Перейти к созданию рисков</a>
-<br>
-<a href="{% url 'measure_create' %}">Перейти к созданию мер</a>
-<br>
+<button id="addCompany" class="btn">Добавить компанию</button>
+
+<div class="button-container">
+    <button onclick="window.location.href='{% url 'vulnerability_create' %}'" class="btn1">Добавить уязвимости</button>
+    <button onclick="window.location.href='{% url 'threat_create' %}'" class="btn1">Добавить угрозы</button>
+    <button onclick="window.location.href='{% url 'risk_create' %}'" class="btn1">Добавить риски </button>
+    <button onclick="window.location.href='{% url 'measure_create' %}'" class="btn1">Добавить меры</button>
+</div>
 
 <br>
+
 <script>
     document.getElementById("addCompany").onclick = function() {
         window.location.href = "{% url 'company_create' %}";
     };
 </script>
 {% endblock %}
-
 
 <style>
         body {
@@ -110,6 +109,29 @@
         .link-container a:hover {
             text-decoration: underline;
         }
-    </style>
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Центрируем кнопки */
+            margin-top: 20px; /* Отступ сверху */
+        }
+
+        .btn1 {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007BFF; /* Цвет фона кнопки */
+            color: white; /* Цвет текста */
+            border: none; /* Убираем рамку */
+            border-radius: 5px; /* Закругленные углы */
+            transition: background-color 0.3s; /* Плавный переход цвета */
+            flex: 1 1 200px; /* Ширина кнопок, чтобы они занимали 200px и могли сжиматься */
+            max-width: 200px; /* Максимальная ширина кнопок */
+        }
+
+        .btn1:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+</style>
 </body>
 </html>

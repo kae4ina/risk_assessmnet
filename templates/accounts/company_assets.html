@@ -44,7 +44,7 @@
                             <ul>
                                 {% for threat in asset.userthreat_set.all %}
                                     <li>
-                                        {{ threat.name }} - Вероятность: {{ threat.possibility }}%
+                                        {{ threat.name }} - Вероятность реализации: {{ threat.possibility }}%
                                     </li>
                                 {% empty %}
                                     <li>Для этого актива нет угроз.</li>
@@ -108,30 +108,60 @@
         border: 1px solid #ddd; /* Цвет рамки деталей */
         border-radius: 5px; /* Округлые края для деталей */
         background-color: #fff; /* Цвет фона для деталей */
+
+
+
     }
+   .button-container {
+    display: flex; /* Используем flexbox для горизонтального расположения */
+    flex-wrap: wrap; /* Позволяет кнопкам переноситься на следующую строку, если не хватает места */
+    gap: 10px; /* Отступы между кнопками */
+}
+
+.btn {
+    padding: 10px 20px; /* Отступы внутри кнопки */
+    background-color: #007bff; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    border-radius: 5px; /* Закругленные углы */
+    transition: background-color 0.3s; /* Плавный переход цвета фона */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+
 </style>
 
 
-    <button id="addAsset">Добавить активы</button>
+    <button id="addAsset" class="btn">Добавить активы</button><br>
     <script>
     document.getElementById("addAsset").onclick = function() {
         window.location.href = "{% url 'assets_choose' %}";
     };
 </script>
 <br>
-<a href="{% url 'company_risk' company_id=assets.first.company.id %}">
-                Перейти к рискам компании
-            </a>
-<br>
-<a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
-<br>
-<a href="{% url 'vulnerability_create' %}">Перейти к созданию уязвимостей</a>
-<br>
-    <a href="{% url 'threat_create' %}">Перейти к созданию угроз</a>
+<div class="button-container">
 
+<a href="{% url 'company_risk' company_id=assets.first.company.id %}" class="btn">
+    Перейти к рискам компании
+</a>
+<br>
+<a href="{% url 'my_companies' %}" class="btn">
+    Назад к моим компаниям
+</a>
+<br>
+<a href="{% url 'vulnerability_create' %}" class="btn">
+    Перейти к созданию уязвимостей
+</a>
+<br>
+<a href="{% url 'threat_create' %}" class="btn">
+    Перейти к созданию угроз
+</a>
 <br>
 
-
+  </div>
 
 {% endblock %}
 

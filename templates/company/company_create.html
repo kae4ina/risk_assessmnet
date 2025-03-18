@@ -51,6 +51,20 @@
         a:hover {
             text-decoration: underline; /* Подчеркивание при наведении */
         }
+         .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007BFF; /* Цвет фона кнопки */
+            color: white; /* Цвет текста */
+            text-decoration: none; /* Убираем подчеркивание */
+            border-radius: 5px; /* Закругленные углы */
+            transition: background-color 0.3s; /* Плавный переход цвета */
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
     </style>
 </head>
 <body>
@@ -67,18 +81,21 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Отправить</button>
+        <button type="submit">Создать</button>
     </form>
     <br>
     <a href="{% url 'assets_choose' %}">Перейти к созданию активов</a>
 
     <br>
-    <a href="{% url 'vulnerability_create' %}">Перейти к созданию уязвимостей</a>
+ <div class="buttons">
+    <a href="{% url 'vulnerability_create' %}" class="btn">Перейти к созданию уязвимостей</a>
     <br>
-    <a href="{% url 'threat_create' %}">Перейти к созданию угроз</a>
+    <a href="{% url 'threat_create' %}" class="btn">Перейти к созданию угроз</a>
     <br>
-    <a href="{% url 'risk_create' %}">Перейти к созданию рисков</a>
+    <a href="{% url 'risk_create' %}" class="btn">Перейти к созданию рисков</a>
     <br>
-    <a href="{% url 'measure_create' %}">Перейти к созданию мер</a>
+    <a href="{% url 'measure_create' %}" class="btn">Перейти к созданию мер</a>
+</div>
+
 </body>
 </html>

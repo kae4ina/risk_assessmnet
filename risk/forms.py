@@ -12,6 +12,12 @@ class RiskForm(forms.ModelForm):
     class Meta:
         model = Risk
         fields = ['name', 'related_threat','decision','related_vulnerability', 'related_company']
+        labels={
+            "name":"Название риска",
+            "decision": "Решение",
+            "related_company": "Компания"
+
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Получаем пользователя из kwargs

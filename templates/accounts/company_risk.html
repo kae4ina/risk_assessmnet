@@ -5,6 +5,9 @@
   <title>Риски компании</title>
 </head>
 <body>
+ <p><strong>Название компании:</strong> {{ user.first.company.company_name }}</p>
+ <p><strong>Область компании:</strong> {{ assets.first.company.default_company_area }}</p>
+
      <h2>Риски компании {{ risks.first.company.company_name }}</h2>
 <ul style="list-style-type: none; padding: 0;">
     {% for risk in risks %}
