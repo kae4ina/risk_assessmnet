@@ -18,7 +18,7 @@ class UserThreat(models.Model):
             MaxValueValidator(100.0)  # Максимальное значение 100.0
         ]
     )
-    related_asset=ForeignKey(to=Asset, on_delete=CASCADE)
+    #related_asset=ForeignKey(to=Asset, on_delete=CASCADE)
     def __str__(self):
         return self.name
 
@@ -30,5 +30,12 @@ class CompanyThreat(models.Model):
 
     class Meta:
         unique_together = ('company', 'threat')
+
+class AssetThreat(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    threat = models.ForeignKey(UserThreat, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('asset', 'threat')
 
 # Create your models here.

@@ -65,13 +65,15 @@ a:hover {
 <body>
 <h2 style="text-align: center;">Добавить Угрозу</h2>
 <form method="post">
-     {% csrf_token %}
-     {{ form.as_p }}
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div id="related_assets_container">
+
+    </div>
     <button type="submit">Добавить</button>
 </form>
 
-
- <script>
+<script>
     $(document).ready(function() {
         $('#id_company').change(function() {
             var companyId = $(this).val();
@@ -81,10 +83,9 @@ a:hover {
                     'company_id': companyId
                 },
                 success: function(data) {
-                    $('#id_related_asset').empty();
-                    $('#id_related_asset').append('<option value="">Выберите актив</option>');
+                    $('#id_related_assets').empty();  // Очистка контейнера для активов
                     $.each(data, function(index, asset) {
-                        $('#id_related_asset').append('<option value="' + asset.id + '">' + asset.name + '</option>');
+                        $('#id_related_assets').append('<input type="checkbox" name="related_assets" value="' + asset.id + '">' + asset.name + '<br>');
                     });
                 }
             });

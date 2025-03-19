@@ -15,48 +15,48 @@
 <div class="container">
     <div class="left-column">
         <h2>Активы компании {{ assets.first.company.company_name }}</h2>
-        <ul style="list-style-type: none; padding: 0;">
-            {% for asset in assets %}
-                <li style="margin-bottom: 20px;">
-                    <div class="asset-container">
-                        <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
-                        <span class="caret" onclick="toggleDetails('{{ asset.id }}')"></span>
+<ul style="list-style-type: none; padding: 0;">
+    {% for asset in assets %}
+        <li style="margin-bottom: 20px;">
+            <div class="asset-container">
+                <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
+                <span class="caret" onclick="toggleDetails('{{ asset.id }}')"></span>
 
-                        <!-- Скрытые детали для актива -->
-                        <div id="details-{{ asset.id }}" class="asset-details" style="display: none;">
-                            <h4>Информация об активе:</h4>
-                            <p><strong>Тип актива:</strong> {{ asset.default_asset_type }}</p>
-                            <p><strong>Категория актива:</strong> {{ asset.default_asset_category }}</p>
-                            <p><strong>Значение актива:</strong> {{ asset.default_asset_value }}</p>
+                <!-- Скрытые детали для актива -->
+                <div id="details-{{ asset.id }}" class="asset-details" style="display: none;">
+                    <h4>Информация об активе:</h4>
+                    <p><strong>Тип актива:</strong> {{ asset.default_asset_type }}</p>
+                    <p><strong>Категория актива:</strong> {{ asset.default_asset_category }}</p>
+                    <p><strong>Значение актива:</strong> {{ asset.default_asset_value }}</p>
 
-                            <h4>Уязвимости:</h4>
-                            <ul>
-                                {% for vulnerability_asset in asset.user_vulnerabilities %}
-                                    <li>
-                                        {{ vulnerability_asset.vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability_asset.vulnerability.exploit_possibility }}%
-                                    </li>
-                                {% empty %}
-                                    <li>Для этого актива нет уязвимостей.</li>
-                                {% endfor %}
-                            </ul>
+                    <h4>Уязвимости:</h4>
+                    <ul>
+                        {% for vulnerability_asset in asset.user_vulnerabilities %}
+                            <li>
+                                {{ vulnerability_asset.vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability_asset.vulnerability.exploit_possibility }}%
+                            </li>
+                        {% empty %}
+                            <li>Для этого актива нет уязвимостей.</li>
+                        {% endfor %}
+                    </ul>
 
-                            <h4>Угрозы:</h4>
-                            <ul>
-                                {% for threat in asset.userthreat_set.all %}
-                                    <li>
-                                        {{ threat.name }} - Вероятность реализации: {{ threat.possibility }}%
-                                    </li>
-                                {% empty %}
-                                    <li>Для этого актива нет угроз.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-            {% empty %}
-                <li>У этой компании нет активов.</li>
-            {% endfor %}
-        </ul>
+                    <h4>Угрозы:</h4>
+                    <ul>
+                        {% for threat_asset in asset.user_threats %}
+                            <li>
+                                {{ threat_asset.threat.name }} - Вероятность реализации: {{ threat_asset.threat.possibility }}%
+                            </li>
+                        {% empty %}
+                            <li>Для этого актива нет угроз.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+    {% empty %}
+        <li>У этой компании нет активов.</li>
+    {% endfor %}
+</ul>
     </div>
 </div>
 
