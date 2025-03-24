@@ -4,7 +4,8 @@ from django.db.models import ForeignKey, CASCADE
 from company.models import Company
 from risk.models import Risk
 
-
+class DefaultMeasure(models.Model):
+    name=models.CharField(max_length=150)
 # Create your models here.
 class UserMeasure(models.Model):
     name=models.CharField(max_length=150)

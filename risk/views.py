@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from assets.models import Asset
 from risk.forms import RiskForm
-from risk.models import Risk
+from risk.models import Risk, RiskVulnerability, RiskThreat
 from threat.models import UserThreat, CompanyThreat
 from vulnerability.models import UserVulnerability
 from django.views.generic import ListView
@@ -14,11 +14,40 @@ def risk_create(request):
     if request.method == 'POST':
         form = RiskForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            # Сохраняем риск
+            risk = form.save(commit=False)
+            risk.save()  # Сначала сохраняем сам риск
+
+            # Сохраняем связанные угрозы
+            related_threats = form.cleaned_data.get('related_threats')
+            for threat in related_threats:
+                RiskThreat.objects.create(risk=risk, threat=threat)
+
+            # Сохраняем связанные уязвимости
+            related_vulnerabilities = form.cleaned_data.get('related_vulnerabilities')
+            for vulnerability in related_vulnerabilities:
+                RiskVulnerability.objects.create(risk=risk, vulnerability=vulnerability)
+
             return redirect('risk_saved')
     else:
         form = RiskForm(user=request.user)
     return render(request, 'risk/risk_create.html', {'form': form})
+
+
+
+def get_threats_and_vulnerabilities(request):
+    asset_ids = request.GET.getlist('asset_ids')  # Получаем список asset_ids
+
+    # Получаем угрозы через промежуточную модель AssetThreat
+    threats = UserThreat.objects.filter(assetthreat__asset_id__in=asset_ids).values('id', 'name').distinct()
+
+    # Получаем уязвимости через промежуточную модель UserVulnerabilityAsset
+    vulnerabilities = UserVulnerability.objects.filter(uservulnerabilityasset__asset_id__in=asset_ids).values('id', 'name').distinct()
+
+    return JsonResponse({
+        'threats': list(threats),
+        'vulnerabilities': list(vulnerabilities)
+    })
 
 
 def risk_saved(request):

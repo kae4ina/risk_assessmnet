@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "risk",
     "measure",
     "task",
+    "solver",
 ]
 
 MIDDLEWARE = [

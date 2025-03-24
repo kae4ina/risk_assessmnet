@@ -22,28 +22,35 @@ class Risk(models.Model):
     def __str__(self):
         return self.name
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @property
     def risk_probability(self):
-        # Получаем значения вероятностей
-        exploit_possibility = self.related_vulnerability.exploit_possibility
-        possibility = self.related_threat.possibility
-        # Вычисляем среднее арифметическое
-        return (exploit_possibility + possibility) / 2
+        # Получаем все связанные угрозы и уязвимости
+        threats = self.risk_threats.all()  # связанные угрозы
+        vulnerabilities = self.risk_vulnerabilities.all()  # связанные уязвимости
+
+        # Суммируем значения вероятностей
+        total_exploit_possibility = sum(vulnerability.exploit_possibility for vulnerability in vulnerabilities)
+        total_possibility = sum(threat.possibility for threat in threats)
+
+        # Общее количество угроз и уязвимостей
+        total_count = len(threats) + len(vulnerabilities)
+
+        # Если нет связанных угроз и уязвимостей, возвращаем 0
+        if total_count == 0:
+            return 0
+
+        # Вычисляем среднюю вероятность
+        average_probability = (total_exploit_possibility + total_possibility) / total_count
+        return average_probability
+
+
+class RiskThreat(models.Model):
+        risk = models.ForeignKey(Risk, related_name='risk_threats', on_delete=models.CASCADE)
+        threat = models.ForeignKey(UserThreat, on_delete=models.CASCADE)
+
+class RiskVulnerability(models.Model):
+        risk = models.ForeignKey(Risk, related_name='risk_vulnerabilities', on_delete=models.CASCADE)
+        vulnerability = models.ForeignKey(UserVulnerability, on_delete=models.CASCADE)
+
+
 # Create your models here.

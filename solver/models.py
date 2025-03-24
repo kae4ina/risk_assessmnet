@@ -6,7 +6,6 @@ from assets.models import DefaultAssetCategory
 
 class DefaultVulnerability(models.Model):
     name = models.CharField(max_length=150)
-    related_asset_category = ForeignKey(to=DefaultAssetCategory, on_delete=CASCADE, default=1)
 
     def __self__(self):
         return self.name
@@ -18,22 +17,45 @@ class ThreatType(models.Model):
     def __str__(self):
         return self.name
 
-
 class DefaultThreat(models.Model):
-    threat_name = models.CharField(max_length=150)
-    threat_type = ForeignKey(to=ThreatType, on_delete=CASCADE)
+    id = models.CharField(max_length=150, primary_key=True)
+
+    name = models.CharField(max_length=150, null=True)
+    description = models.CharField(max_length=1500, null=True, blank=True)
+    source = models.CharField(max_length=500, null=True)
+    destination = models.CharField(max_length=500, null=True)
+
+    destruction_of_confidence = models.BooleanField(null=True)
+    destruction_of_integrity = models.BooleanField(null=True)
+    destruction_of_availability = models.BooleanField(null=True)
+    def __str__(self):
+        return self.name
+
+class DefaultMeasureGroup(models.Model):
+    id = models.CharField(max_length=4, primary_key=True)
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+class DefaultMeasureSubgroup(models.Model):
+    id = models.CharField(max_length=6, primary_key=True)
+    group = ForeignKey(to=DefaultMeasureGroup, on_delete=CASCADE, default=1, null=True)
+    name = models.CharField(max_length=300, null=True)
 
     def __str__(self):
-        return self.threat_name
+        return self.name
 
 class DefaultMeasure(models.Model):
-    name=models.CharField(max_length=300)
-    description = models.CharField(max_length=1000, null=True, blank=True)
+    id = models.CharField(max_length=10, primary_key=True)
+    name = models.CharField(max_length=500)
+    subgroup = ForeignKey(to=DefaultMeasureSubgroup, on_delete=CASCADE, default=1)
+    #related_threat = ForeignKey(to=DefaultThreat, on_delete=CASCADE, default=1)  # парируемая угроза
     def __str__(self):
         return self.name
 
 
-# Create your models here.
+
+
 class RulesVuln(models.Model):
     vuln=ForeignKey(to=DefaultVulnerability, on_delete=CASCADE)
     measure=ForeignKey(to=DefaultMeasure, on_delete=CASCADE)

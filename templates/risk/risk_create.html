@@ -64,85 +64,111 @@ a:hover {
 </style>
 </head>
 <body>
- <h2 style="text-align: center;">Добавить риск</h2>
+   <h2 style="text-align: center;">Добавить риск</h2>
 <form method="post" id="risk-form">
-        {% csrf_token %}
-        <div>
-            {{ form.name.label }} {{ form.name }}<br><br>
-            {{ form.decision.label }} {{ form.decision }}<br><br>
-            {{ form.related_company.label }} {{ form.related_company }}<br><br>
-            <label for="related_asset">Выберите актив:</label>
-            <select id="related_asset" name="related_asset">
-                <option value="">Выберите актив</option>
-            </select><br><br>
-            <label for="related_threat">Выберите угрозу:</label>
-            <select id="related_threat" name="related_threat">
-                <option value="">Выберите угрозу</option>
-            </select><br><br>
-            <label for="related_vulnerability">Выберите уязвимость:</label>
-            <select id="related_vulnerability" name="related_vulnerability">
-                <option value="">Выберите уязвимость</option>
-            </select><br><br>
-            <button type="submit">Создать риск</button>
+    {% csrf_token %}
+    <div>
+        {{ form.name.label }} {{ form.name }}<br><br>
+        {{ form.decision.label }} {{ form.decision }}<br><br>
+        {{ form.related_company.label }} {{ form.related_company }}<br><br>
+
+        <label for="related_asset">Выберите активы:</label>
+        <div id="related_asset_container">
+            <select id="related_asset" name="related_asset" multiple>
+                <option value="">Выберите активы</option>
+            </select>
         </div>
-    </form>
+        <br>
 
-    <script>
-        $(document).ready(function() {
-            // Обработчик изменения компании
-            $('#id_related_company').change(function() {
-                var companyId = $(this).val();
-                $('#related_asset').empty().append('<option value="">Выберите актив</option>');
-                $('#related_threat').empty().append('<option value="">Выберите угрозу</option>');
-                $('#related_vulnerability').empty().append('<option value="">Выберите уязвимость</option>');
+        <label>Выберите угрозы:</label>
+        <div id="related_threats_container"></div>
+        <br>
 
-                if (companyId) {
-                    $.ajax({
-                        url: "{% url 'get_assets' %}",
-                        data: {
-                            'company_id': companyId
-                        },
-                        success: function(data) {
-                            $.each(data.assets, function(index, asset) {
-                                $('#related_asset').append(
-                                    $('<option></option>').val(asset.id).text(asset.name)
-                                );
-                            });
-                        }
-                    });
-                }
-            });
+        <label>Выберите уязвимости:</label>
+        <div id="related_vulnerabilities_container"></div>
+        <br>
 
-            // Обработчик изменения актива
-            $('#related_asset').change(function() {
-                var assetId = $(this).val();
-                $('#related_threat').empty().append('<option value="">Выберите угрозу</option>');
-                $('#related_vulnerability').empty().append('<option value="">Выберите уязвимость</option>');
+        <button type="submit">Создать риск</button>
+    </div>
+</form>
 
-                if (assetId) {
-                    $.ajax({
-                        url: "{% url 'get_threats_and_vulnerabilities' %}",
-                        data: {
-                            'asset_id': assetId
-                        },
-                        success: function(data) {
-                            $.each(data.threats, function(index, threat) {
-                                $('#related_threat').append(
-                                    $('<option></option>').val(threat.id).text(threat.name)
-                                );
-                            });
-                            $.each(data.vulnerabilities, function(index, vulnerability) {
-                                $('#related_vulnerability').append(
-                                    $('<option></option>').val(vulnerability.id).text(vulnerability.name)
-                                );
-                            });
-                        }
-                    });
-                }
-            });
+<script>
+    $(document).ready(function() {
+        // Обработчик изменения компании
+        $('#id_related_company').change(function() {
+            var companyId = $(this).val();
+            $('#related_asset').empty().append('<option value="">Выберите активы</option>');
+            $('#related_threats_container').empty();
+            $('#related_vulnerabilities_container').empty();
+
+            if (companyId) {
+                $.ajax({
+                    url: "{% url 'get_assets' %}",
+                    data: {
+                        'company_id': companyId
+                    },
+                    success: function(data) {
+                        $.each(data.assets, function(index, asset) {
+                            $('#related_asset').append(
+                                $('<option></option>').val(asset.id).text(asset.name)
+                            );
+                        });
+                    }
+                });
+            }
         });
-    </script>
+
+        // Обработчик изменения активов
+        $('#related_asset').change(function() {
+            var selectedAssetIds = $(this).val(); // Получаем массив выбранных активов
+            $('#related_threats_container').empty();
+            $('#related_vulnerabilities_container').empty();
+
+            if (selectedAssetIds.length > 0) {
+                $.ajax({
+                    url: "{% url 'get_threats_and_vulnerabilities' %}",
+                    data: {
+                        'asset_ids': selectedAssetIds // Отправляем массив выбранных активов
+                    },
+                    success: function(data) {
+                        // Загружаем угрозы
+                        $.each(data.threats, function(index, threat) {
+                            $('#related_threats_container').append(
+                                $('<div></div>').append(
+                                    $('<input>', {
+                                        type: 'checkbox',
+                                        name: 'related_threats',
+                                        value: threat.id
+                                    }),
+                                    $('<label></label>').text(threat.name)
+                                )
+                            );
+                        });
+
+                        // Загружаем уязвимости
+                        $.each(data.vulnerabilities, function(index, vulnerability) {
+                            $('#related_vulnerabilities_container').append(
+                                $('<div></div>').append(
+                                    $('<input>', {
+                                        type: 'checkbox',
+                                        name: 'related_vulnerabilities',
+                                        value: vulnerability.id
+                                    }),
+                                    $('<label></label>').text(vulnerability.name)
+                                )
+                            );
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
 </body>
+
+
 </html>
 
 </body>
