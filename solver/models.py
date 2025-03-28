@@ -54,13 +54,17 @@ class DefaultMeasure(models.Model):
         return self.name
 
 
-
-
 class RulesVuln(models.Model):
     vuln=ForeignKey(to=DefaultVulnerability, on_delete=CASCADE)
     measure=ForeignKey(to=DefaultMeasure, on_delete=CASCADE)
 
 class RulesThreat(models.Model):
-    threat=ForeignKey(to=DefaultThreat, on_delete=CASCADE)
     measure = ForeignKey(to=DefaultMeasure, on_delete=CASCADE)
+    threat=ForeignKey(to=DefaultThreat, on_delete=CASCADE, default=1)
+    def __str__(self):
+        measure_name = self.measure.name if hasattr(self.measure, 'name') else "Мера не указана"
+        threat_name = self.threat.name if hasattr(self.threat, 'name') else "Угроза не указана"
+
+        return f"Правило: Мера — {measure_name}, Угроза — {threat_name}"
+
 
