@@ -68,3 +68,48 @@ class RulesThreat(models.Model):
         return f"Правило: Мера — {measure_name}, Угроза — {threat_name}"
 
 
+class GeneralThreats(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=700)
+
+    def __str__(self):
+        return self.name
+
+class GroupWays(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    name=models.CharField(max_length=200)
+
+class Ways(models.Model):
+    id = models.CharField(primary_key=True, max_length=20)
+    name=models.CharField(max_length=200)
+    group = ForeignKey(to=GroupWays, on_delete=CASCADE)
+    def __str__(self):
+        return self.name
+
+class ThreatWays(models.Model):
+    generalthreat=ForeignKey(to=GeneralThreats, on_delete=CASCADE)
+    way=ForeignKey(to=Ways, on_delete=CASCADE)
+
+
+class GeneralObjects(models.Model):
+    id = models.CharField(primary_key=True, max_length=20)
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=700)
+    def __str__(self):
+        return self.name
+
+class ThreatObject(models.Model):
+      id_object=ForeignKey(to=GeneralObjects, on_delete=CASCADE)
+      id_generalthreat=ForeignKey(to=GeneralThreats,on_delete=CASCADE)
+
+
+class UserRisk(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    general_object = models.ForeignKey(GeneralObjects, on_delete=models.CASCADE)
+    threats = models.ManyToManyField(GeneralThreats)
+    threat_ways = models.ManyToManyField(ThreatWays)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.general_object.name}"

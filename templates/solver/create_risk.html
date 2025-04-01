@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Создание нового риска</h2>
+<form method="post" id="riskForm">
+    {% csrf_token %}
+
+    <div class="form-group mb-4">
+        {{ form.general_object.label_tag }}
+        {{ form.general_object }}
+    </div>
+
+    <div class="form-group mb-4">
+        <label class="fw-bold mb-2">Угрозы:</label>
+        <div id="threats-container">
+            {% for threat in form.threats %}
+            <div class="form-check">
+                {{ threat.tag }}
+                <label class="form-check-label" for="{{ threat.id_for_label }}">
+                    {{ threat.choice_label }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-group mb-4" id="threat-ways-container" style="display:none;">
+        <label class="fw-bold mb-2">Способы реализации:</label>
+        <div id="ways-checkboxes"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('input[name="threats"]').change(function() {
+        const selectedThreats = $('input[name="threats"]:checked').map(function() {
+            return $(this).val();
+        }).get();
+
+        if (selectedThreats.length > 0) {
+            $.ajax({
+                url: "{% url 'load_threat_ways' %}",
+                data: { 'threat_ids[]': selectedThreats },
+                success: function(response) {
+                    renderWays(response.ways);
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    $('#ways-checkboxes').html(
+                        '<div class="alert alert-danger">Ошибка загрузки способов</div>'
+                    );
+                }
+            });
+        } else {
+            $('#threat-ways-container').hide();
+        }
+    });
+
+    function renderWays(ways) {
+        let html = '';
+        ways.forEach(way => {
+            html += `
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       name="threat_ways" value="${way.id}" id="way-${way.id}">
+                <label class="form-check-label" for="way-${way.id}">
+                    ${way.way_name}
+                </label>
+            </div>`;
+        });
+
+        $('#ways-checkboxes').html(html);
+        $('#threat-ways-container').show();
+    }
+});
+</script>
+{% endblock %}
