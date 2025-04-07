@@ -108,7 +108,7 @@ class UserRisk(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     general_object = models.ForeignKey(GeneralObjects, on_delete=models.CASCADE)
     threats = models.ManyToManyField(GeneralThreats)
-    threat_ways = models.ManyToManyField(ThreatWays)
+    ways = models.ManyToManyField(Ways)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

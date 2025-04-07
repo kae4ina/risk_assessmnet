@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
-from .models import ThreatWays, GeneralThreats
+from .models import ThreatWays, GeneralThreats, Ways
 from .forms import RiskCreationForm
-
 
 @login_required
 def create_risk(request):
@@ -15,18 +14,17 @@ def create_risk(request):
             risk.user = request.user
             risk.save()
 
-            threats = form.cleaned_data.get('threats')
-            risk.threats.set(threats)
-
-            threat_ways_ids = request.POST.getlist('threat_ways')
-            threat_ways = ThreatWays.objects.filter(id__in=threat_ways_ids)
-            risk.threat_ways.set(threat_ways)
+            # Сохраняем ManyToMany поля
+            risk.threats.set(form.cleaned_data['threats'])
+            risk.ways.set(form.cleaned_data['ways'])
 
             return redirect('risk_created_success')
     else:
         form = RiskCreationForm()
 
     return render(request, 'solver/create_risk.html', {'form': form})
+
+
 
 
 @require_GET
@@ -49,4 +47,19 @@ def load_threat_ways(request):
 
         })
 
+    return JsonResponse({'ways': data})
+
+@login_required
+def risk_created_success(request):
+    return render(request, 'solver/risk_created_success.html')
+
+@require_GET
+def load_all_ways(request):
+    ways = Ways.objects.all().select_related('group')
+    data = [{
+        'id': way.id,
+        'name': way.name,
+        'group_id': way.group.id,
+        'group_name': way.group.name
+    } for way in ways]
     return JsonResponse({'ways': data})

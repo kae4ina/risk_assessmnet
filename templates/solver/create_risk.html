@@ -24,57 +24,148 @@
         </div>
     </div>
 
-    <div class="form-group mb-4" id="threat-ways-container" style="display:none;">
+    <div class="form-group mb-4">
         <label class="fw-bold mb-2">Способы реализации:</label>
-        <div id="ways-checkboxes"></div>
+
+        <!-- Скрытое поле для хранения выбранных значений -->
+        {{ form.ways }}
+
+        <!-- Кастомный выпадающий список с чекбоксами -->
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="waysDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                Выберите способы
+            </button>
+            <div class="dropdown-menu" aria-labelledby="waysDropdown" id="waysDropdownMenu">
+                <div class="px-3 py-1">
+                    <input type="text" class="form-control mb-2" id="waysSearch"
+                           placeholder="Поиск..." autocomplete="off">
+                </div>
+                <div id="waysCheckboxes" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Сюда загрузим чекбоксы через AJAX -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Будет отображать выбранные элементы -->
+        <div id="selectedWays" class="mt-2"></div>
     </div>
 
     <button type="submit" class="btn btn-primary">Сохранить</button>
 </form>
 
+<!-- Подключаем Bootstrap JS (для работы dropdown) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
 $(document).ready(function() {
-    $('input[name="threats"]').change(function() {
-        const selectedThreats = $('input[name="threats"]:checked').map(function() {
-            return $(this).val();
-        }).get();
+    // Загружаем все способы при загрузке страницы
+    loadAllWays();
 
-        if (selectedThreats.length > 0) {
-            $.ajax({
-                url: "{% url 'load_threat_ways' %}",
-                data: { 'threat_ids[]': selectedThreats },
-                success: function(response) {
-                    renderWays(response.ways);
-                },
-                error: function(xhr) {
-                    console.error("Error:", xhr.responseText);
-                    $('#ways-checkboxes').html(
-                        '<div class="alert alert-danger">Ошибка загрузки способов</div>'
-                    );
+    function loadAllWays() {
+        $.ajax({
+            url: "{% url 'load_all_ways' %}",
+            success: function(response) {
+                console.log("All ways loaded:", response.ways);
+                const container = $('#waysCheckboxes');
+                container.empty();
+
+                // Группируем способы по группам
+                const groupedWays = {};
+                response.ways.forEach(way => {
+                    if (!groupedWays[way.group_name]) {
+                        groupedWays[way.group_name] = [];
+                    }
+                    groupedWays[way.group_name].push(way);
+                });
+
+                // Добавляем чекбоксы с группами
+                for (const [groupName, ways] of Object.entries(groupedWays)) {
+                    // Добавляем заголовок группы
+                    container.append(`<h6 class="dropdown-header">${groupName}</h6>`);
+
+                    // Добавляем чекбоксы
+                    ways.forEach(way => {
+                        const checkboxId = `way-${way.id}`;
+                        container.append(`
+                            <div class="form-check dropdown-item">
+                                <input class="form-check-input way-checkbox" type="checkbox"
+                                       id="${checkboxId}" value="${way.id}">
+                                <label class="form-check-label" for="${checkboxId}">
+                                    ${way.name}
+                                </label>
+                            </div>
+                        `);
+                    });
                 }
-            });
-        } else {
-            $('#threat-ways-container').hide();
-        }
-    });
 
-    function renderWays(ways) {
-        let html = '';
-        ways.forEach(way => {
-            html += `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox"
-                       name="threat_ways" value="${way.id}" id="way-${way.id}">
-                <label class="form-check-label" for="way-${way.id}">
-                    ${way.way_name}
-                </label>
-            </div>`;
+                // Инициализируем обработчики
+                initWayCheckboxes();
+                initSearch();
+            },
+            error: function(xhr) {
+                console.error("Error loading ways:", xhr.responseText);
+                $('#waysCheckboxes').html('<div class="dropdown-item text-danger">Ошибка загрузки способов</div>');
+            }
+        });
+    }
+
+    function initWayCheckboxes() {
+        // Обработчик изменения чекбоксов
+        $('.way-checkbox').change(function() {
+            updateSelectedWaysDisplay();
+            updateHiddenField();
         });
 
-        $('#ways-checkboxes').html(html);
-        $('#threat-ways-container').show();
+        // Инициализируем отображение выбранных элементов
+        updateSelectedWaysDisplay();
+    }
+
+    function updateSelectedWaysDisplay() {
+        const selected = [];
+        $('.way-checkbox:checked').each(function() {
+            selected.push($(this).next('label').text());
+        });
+
+        const display = selected.length > 0
+            ? selected.join(', ')
+            : 'Не выбрано';
+
+        $('#selectedWays').text(display);
+        $('#waysDropdown').text(selected.length > 0
+            ? `Выбрано: ${selected.length}`
+            : 'Выберите способы');
+    }
+
+    function updateHiddenField() {
+        const selectedValues = $('.way-checkbox:checked').map(function() {
+            return this.value;
+        }).get();
+
+        $('#id_ways').val(selectedValues);
+    }
+
+    function initSearch() {
+        $('#waysSearch').on('input', function() {
+            const searchText = $(this).val().toLowerCase();
+            $('.way-checkbox').each(function() {
+                const label = $(this).next('label').text().toLowerCase();
+                const item = $(this).closest('.dropdown-item');
+                item.toggle(label.includes(searchText));
+            });
+        });
     }
 });
 </script>
+
+<style>
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+.dropdown-item .form-check-label {
+    cursor: pointer;
+    width: 100%;
+}
+</style>
 {% endblock %}
