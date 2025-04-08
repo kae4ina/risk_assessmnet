@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import ForeignKey, CASCADE
+from django.db.models import ForeignKey, CASCADE, FloatField, CharField
 
 from assets.models import DefaultAssetCategory
 
@@ -105,11 +105,13 @@ class ThreatObject(models.Model):
 
 
 class UserRisk(models.Model):
+    name=CharField(max_length=150)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     general_object = models.ForeignKey(GeneralObjects, on_delete=models.CASCADE)
     threats = models.ManyToManyField(GeneralThreats)
     ways = models.ManyToManyField(Ways)
     created_at = models.DateTimeField(auto_now_add=True)
+    money_loss=FloatField()
 
     def __str__(self):
         return f"{self.user.username} - {self.general_object.name}"

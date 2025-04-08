@@ -6,6 +6,11 @@
     {% csrf_token %}
 
     <div class="form-group mb-4">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+    </div>
+
+    <div class="form-group mb-4">
         {{ form.general_object.label_tag }}
         {{ form.general_object }}
     </div>
@@ -26,11 +31,8 @@
 
     <div class="form-group mb-4">
         <label class="fw-bold mb-2">Способы реализации:</label>
-
-        <!-- Скрытое поле для хранения выбранных значений -->
         {{ form.ways }}
 
-        <!-- Кастомный выпадающий список с чекбоксами -->
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="waysDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,9 +48,12 @@
                 </div>
             </div>
         </div>
-
-        <!-- Будет отображать выбранные элементы -->
         <div id="selectedWays" class="mt-2"></div>
+    </div>
+
+    <div class="form-group mb-4">
+        {{ form.money_loss.label_tag }}
+        {{ form.money_loss }}
     </div>
 
     <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -82,10 +87,7 @@ $(document).ready(function() {
 
                 // Добавляем чекбоксы с группами
                 for (const [groupName, ways] of Object.entries(groupedWays)) {
-                    // Добавляем заголовок группы
                     container.append(`<h6 class="dropdown-header">${groupName}</h6>`);
-
-                    // Добавляем чекбоксы
                     ways.forEach(way => {
                         const checkboxId = `way-${way.id}`;
                         container.append(`
@@ -112,13 +114,10 @@ $(document).ready(function() {
     }
 
     function initWayCheckboxes() {
-        // Обработчик изменения чекбоксов
         $('.way-checkbox').change(function() {
             updateSelectedWaysDisplay();
             updateHiddenField();
         });
-
-        // Инициализируем отображение выбранных элементов
         updateSelectedWaysDisplay();
     }
 
@@ -142,7 +141,6 @@ $(document).ready(function() {
         const selectedValues = $('.way-checkbox:checked').map(function() {
             return this.value;
         }).get();
-
         $('#id_ways').val(selectedValues);
     }
 

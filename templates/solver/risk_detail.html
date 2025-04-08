@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Риск #{{ risk.id }}</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Дата создания:</dt>
+                <dd class="col-sm-9">{{ risk.created_at|date:"d.m.Y H:i" }}</dd>
+
+                <dt class="col-sm-3">Объект защиты:</dt>
+                <dd class="col-sm-9">{{ risk.general_object.name }}</dd>
+
+                <dt class="col-sm-3">Угрозы:</dt>
+                <dd class="col-sm-9">
+                    <ul>
+                        {% for threat in risk.threats.all %}
+                        <li>{{ threat.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+
+                <dt class="col-sm-3">Способы реализации:</dt>
+                <dd class="col-sm-9">
+                    <ul>
+                        {% for way in risk.ways.all %}
+                        <li>{{ way.name }} ({{ way.group.name }})</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+
+            <a href="{% url 'user_risks' %}" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

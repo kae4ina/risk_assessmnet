@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
-from .models import ThreatWays, GeneralThreats, Ways
+from .models import ThreatWays, GeneralThreats, Ways, UserRisk
 from .forms import RiskCreationForm
+
 
 @login_required
 def create_risk(request):
@@ -14,7 +15,6 @@ def create_risk(request):
             risk.user = request.user
             risk.save()
 
-            # Сохраняем ManyToMany поля
             risk.threats.set(form.cleaned_data['threats'])
             risk.ways.set(form.cleaned_data['ways'])
 
@@ -25,22 +25,20 @@ def create_risk(request):
     return render(request, 'solver/create_risk.html', {'form': form})
 
 
-
-
 @require_GET
 def load_threat_ways(request):
     threat_ids = request.GET.getlist('threat_ids[]', [])
 
-    # Используем точные имена полей из вашей модели
+
     threat_ways = ThreatWays.objects.filter(
-        generalthreat_id__in=threat_ids  # Используем generalthreat_id вместо generalthreat
+        generalthreat_id__in=threat_ids
     ).select_related('way', 'generalthreat', 'way__group')
 
     data = []
     for tw in threat_ways:
         data.append({
             'id': tw.id,
-            'threat_id': tw.generalthreat.id,  # Используем generalthreat
+            'threat_id': tw.generalthreat.id,
            'threat_name': tw.generalthreat.name,
             'way_name': tw.way.name,
 
@@ -51,7 +49,7 @@ def load_threat_ways(request):
 
 @login_required
 def risk_created_success(request):
-    return render(request, 'solver/risk_created_success.html')
+    return render(request, 'solver/user_risks.html')
 
 @require_GET
 def load_all_ways(request):
@@ -63,3 +61,13 @@ def load_all_ways(request):
         'group_name': way.group.name
     } for way in ways]
     return JsonResponse({'ways': data})
+
+
+@login_required
+def user_risks(request):
+    risks = UserRisk.objects.filter(user=request.user) \
+        .select_related('general_object', 'user') \
+        .prefetch_related('threats', 'ways') \
+        .order_by('-created_at')
+
+    return render(request, 'solver/user_risks.html', {'risks': risks})
