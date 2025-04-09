@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
-from .models import ThreatWays, GeneralThreats, Ways, UserRisk
+from .models import ThreatWays, GeneralThreats, Ways, UserRisk, DefaultMeasure, DefaultMeasureGroup
 from .forms import RiskCreationForm
 
 
@@ -16,9 +17,13 @@ def create_risk(request):
             risk.save()
 
             risk.threats.set(form.cleaned_data['threats'])
-            risk.ways.set(form.cleaned_data['ways'])
 
-            return redirect('risk_created_success')
+
+            ways_ids = form.cleaned_data['ways'].split(',')
+            ways_ids = [id.strip() for id in ways_ids if id.strip()]
+            risk.ways.set(ways_ids)
+
+            return redirect('user_risks')
     else:
         form = RiskCreationForm()
 
@@ -49,7 +54,8 @@ def load_threat_ways(request):
 
 @login_required
 def risk_created_success(request):
-    return render(request, 'solver/user_risks.html')
+    return render(request, 'solver/risk_created_success.html')
+
 
 @require_GET
 def load_all_ways(request):
@@ -65,9 +71,39 @@ def load_all_ways(request):
 
 @login_required
 def user_risks(request):
+    # В views.py в user_risks view
     risks = UserRisk.objects.filter(user=request.user) \
+        .annotate(measures_count=Count('threats__rulesthreat__measure', distinct=True)) \
         .select_related('general_object', 'user') \
         .prefetch_related('threats', 'ways') \
         .order_by('-created_at')
 
     return render(request, 'solver/user_risks.html', {'risks': risks})
+
+
+@login_required
+def risk_measures(request, risk_id):
+    risk = get_object_or_404(UserRisk.objects.prefetch_related('threats'), pk=risk_id, user=request.user)
+    threat_ids = risk.threats.values_list('id', flat=True)
+
+
+    measures = DefaultMeasure.objects.filter(
+        rulesthreat__threat_id__in=threat_ids
+    ).select_related('subgroup__group').distinct()
+
+
+    measure_groups = DefaultMeasureGroup.objects.filter(
+        defaultmeasuresubgroup__defaultmeasure__in=measures
+    ).distinct()
+
+
+    group_filter = request.GET.get('group')
+    if group_filter:
+        measures = measures.filter(subgroup__group_id=group_filter)
+
+    return render(request, 'solver/risk_measures.html', {
+        'risk': risk,
+        'measures': measures,
+        'measure_groups': measure_groups,
+        'selected_group': group_filter
+    })

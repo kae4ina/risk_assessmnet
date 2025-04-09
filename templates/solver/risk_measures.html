@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Меры защиты для риска "{{ risk.name }}"</h2>
+    <a href="{% url 'user_risks' %}" class="btn btn-secondary mb-3">Назад к списку рисков</a>
+
+    <!-- Фильтр по группам -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Фильтр мер</h5>
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="groupFilter" class="form-label">Группа мер:</label>
+                    <select name="group" id="groupFilter" class="form-select">
+                        <option value="">Все группы</option>
+                        {% for group in measure_groups %}
+                        <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Применить</button>
+                    <a href="?group=" class="btn btn-outline-secondary">Сбросить</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список мер -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Список мер защиты</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if measures %}
+            <div class="list-group list-group-flush">
+                {% for measure in measures %}
+                <div class="list-group-item">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary me-3">{{ measure.id }}</span>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0">{{ measure.name }}</h4>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted">
+                {% if selected_group %}
+                Нет мер в выбранной группе
+                {% else %}
+                Нет доступных мер защиты для выбранных угроз
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -17,10 +17,8 @@ class RiskCreationForm(forms.ModelForm):
         label="Угрозы"
     )
 
-    ways = forms.ModelMultipleChoiceField(
-        queryset=Ways.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control d-none'}),
-        label="Способы реализации",
+    ways = forms.CharField(
+        widget=forms.HiddenInput(),
         required=False
     )
 

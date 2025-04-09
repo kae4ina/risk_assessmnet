@@ -35,11 +35,14 @@
                     <td>
                         <ul class="list-unstyled">
                             {% for way in risk.ways.all %}
-                            <li>{{ way.name }} ({{ way.group.name }})</li>
+                            <li>{{ way.name }} </li>
                             {% endfor %}
                         </ul>
                     </td>
                     <td>
+                           <a href="{% url 'risk_measures' risk.id %}" class="btn btn-sm btn-info">
+        Меры защиты ({{ risk.measures_count }})
+    </a>
                         <a href="#" class="btn btn-sm btn-outline-primary">Просмотр</a>
                         <a href="#" class="btn btn-sm btn-outline-danger">Удалить</a>
                     </td>

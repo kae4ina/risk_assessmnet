@@ -31,7 +31,7 @@
 
     <div class="form-group mb-4">
         <label class="fw-bold mb-2">Способы реализации:</label>
-        {{ form.ways }}
+<input type="hidden" name="ways" id="id_ways">
 
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="waysDropdown"
@@ -138,12 +138,12 @@ $(document).ready(function() {
     }
 
     function updateHiddenField() {
-        const selectedValues = $('.way-checkbox:checked').map(function() {
-            return this.value;
-        }).get();
-        $('#id_ways').val(selectedValues);
-    }
+    const selectedValues = $('.way-checkbox:checked').map(function() {
+        return this.value;
+    }).get().join(',');
 
+    $('#id_ways').val(selectedValues);
+}
     function initSearch() {
         $('#waysSearch').on('input', function() {
             const searchText = $(this).val().toLowerCase();
