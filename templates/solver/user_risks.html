@@ -1,60 +1,53 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="container mt-4">
-    <h2>Мои риски</h2>
-
-    {% if risks %}
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>Название</th>
-                    <th>Дата создания</th>
-                    <th>Объект защиты</th>
-                    <th>Возможные потери</th>
-                    <th>Угрозы</th>
-                    <th>Способы реализации</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for risk in risks %}
-                <tr>
-                    <td>{{ risk.name }}</td>
-                    <td>{{ risk.created_at|date:"d.m.Y H:i" }}</td>
-                    <td>{{ risk.general_object.name }}</td>
-                    <td>{{ risk.money_loss }} руб.</td>
-                    <td>
-                        <ul class="list-unstyled">
-                            {% for threat in risk.threats.all %}
-                            <li>{{ threat.name }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>
-                        <ul class="list-unstyled">
-                            {% for way in risk.ways.all %}
-                            <li>{{ way.name }} </li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>
-                           <a href="{% url 'risk_measures' risk.id %}" class="btn btn-sm btn-info">
-        Меры защиты ({{ risk.measures_count }})
-    </a>
-                        <a href="#" class="btn btn-sm btn-outline-primary">Просмотр</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Удалить</a>
-                    </td>
-                </tr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название риска</th>
+            <th>Объект защиты</th>
+            <th>Угрозы</th>
+            <th>Возможные потери</th>
+            <th>Степень риска</th>
+            <th>Уровень риска</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for risk in risks %}
+        {% with risk_level=risk.get_risk_level %}
+        <tr>
+            <td>{{ risk.name }}</td>
+            <td>{{ risk.general_object.name }}</td>
+            <td>
+                {% for threat in risk.threats.all %}
+                {{ threat.name }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="alert alert-info">
-        У вас пока нет созданных рисков.
-    </div>
-    {% endif %}
-</div>
-{% endblock %}
+            </td>
+            <td>{{ risk.money_loss }} руб.</td>
+            <td>{{ risk_level.value|floatformat:2 }}</td>
+            <td>
+                <span class="risk-badge risk-{{ risk_level.class }}">
+                    {{ risk_level.text }}
+                </span>
+            </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+    </tbody>
+</table>
+<style>
+    .risk-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+        font-weight: 700;
+    }
+    .risk-low {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+    .risk-medium {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+    .risk-high {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+</style>

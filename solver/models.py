@@ -60,6 +60,8 @@ class GeneralThreats(models.Model):
     id = models.CharField(primary_key=True, max_length=10)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=700)
+    possibility_of_occurrence=models.FloatField(default=0.5)
+    possibility_of_success=models.FloatField(default=0.5)
 
     def __str__(self):
         return self.name
@@ -103,6 +105,37 @@ class UserRisk(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.general_object.name}"
+
+    @property
+    def risk_score(self):
+        """
+        степень риска:
+        Σ (possibility_of_occurrence * 100 * possibility_of_success) * money_loss
+        где сумма берется по всем связанным угрозам
+        """
+        total_risk = 0
+        for threat in self.threats.all():
+            threat_risk = (threat.possibility_of_occurrence * 100 *
+                           threat.possibility_of_success)
+            total_risk += threat_risk
+
+        return total_risk * self.money_loss
+
+    def get_risk_level(self):
+
+        score = self.risk_score
+        if score < 500000:
+            level = "Низкий"
+        elif 500000 <= score < 10000000:
+            level = "Средний"
+        else:
+            level = "Высокий"
+
+        return {
+            'value': score,
+            'text': level,
+            'class': 'low' if score < 500000 else 'medium' if score < 10000000 else 'high'
+        }
 
 class RulesThreat(models.Model):
         measure = ForeignKey(to=DefaultMeasure, on_delete=CASCADE)
