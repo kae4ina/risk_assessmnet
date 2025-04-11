@@ -1,10 +1,11 @@
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from .models import ThreatWays, GeneralThreats, Ways, UserRisk, DefaultMeasure, DefaultMeasureGroup
 from .forms import RiskCreationForm
+
 
 
 @login_required
@@ -71,10 +72,8 @@ def load_all_ways(request):
 
 @login_required
 def user_risks(request):
-    # В views.py в user_risks view
     risks = UserRisk.objects.filter(user=request.user) \
-        .annotate(measures_count=Count('threats__rulesthreat__measure', distinct=True)) \
-        .select_related('general_object', 'user') \
+        .select_related('general_object') \
         .prefetch_related('threats', 'ways') \
         .order_by('-created_at')
 
@@ -82,28 +81,54 @@ def user_risks(request):
 
 
 @login_required
+def risk_detail(request, risk_id):
+    risk = get_object_or_404(
+        UserRisk.objects.select_related('general_object')
+        .prefetch_related('threats', 'ways'),
+        pk=risk_id,
+        user=request.user
+    )
+    return render(request, 'solver/risk_detail.html', {'risk': risk})
+
+
+@login_required
 def risk_measures(request, risk_id):
     risk = get_object_or_404(UserRisk.objects.prefetch_related('threats'), pk=risk_id, user=request.user)
     threat_ids = risk.threats.values_list('id', flat=True)
 
-
+    # базовый queryset мер
     measures = DefaultMeasure.objects.filter(
         rulesthreat__threat_id__in=threat_ids
     ).select_related('subgroup__group').distinct()
 
+    #  топ-10 мер
+    top_measures = measures.order_by('-koef')[:10]
+
+
+    view_type = request.GET.get('view', 'all')
+    sort = request.GET.get('sort')
+    group_filter = request.GET.get('group')
+
+    # фильтры только для режима "все меры"
+    if view_type == 'all':
+        if group_filter:
+            measures = measures.filter(subgroup__group_id=group_filter)
+
+        if sort == 'asc':
+            measures = measures.order_by('koef')
+        elif sort == 'desc':
+            measures = measures.order_by('-koef')
 
     measure_groups = DefaultMeasureGroup.objects.filter(
         defaultmeasuresubgroup__defaultmeasure__in=measures
     ).distinct()
 
-
-    group_filter = request.GET.get('group')
-    if group_filter:
-        measures = measures.filter(subgroup__group_id=group_filter)
-
     return render(request, 'solver/risk_measures.html', {
         'risk': risk,
         'measures': measures,
+        'top_measures': top_measures,
         'measure_groups': measure_groups,
-        'selected_group': group_filter
+        'selected_group': group_filter,
+        'current_sort': sort,
+        'current_view': view_type,
     })

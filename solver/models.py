@@ -49,6 +49,7 @@ class DefaultMeasure(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=500)
     subgroup = ForeignKey(to=DefaultMeasureSubgroup, on_delete=CASCADE, default=1)
+    koef=models.FloatField(default=0.5)
     #related_threat = ForeignKey(to=DefaultThreat, on_delete=CASCADE, default=1)  # парируемая угроза
     def __str__(self):
         return self.name

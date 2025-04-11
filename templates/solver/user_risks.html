@@ -2,36 +2,35 @@
     <thead>
         <tr>
             <th>Название риска</th>
-            <th>Объект защиты</th>
-            <th>Угрозы</th>
-            <th>Возможные потери</th>
             <th>Степень риска</th>
             <th>Уровень риска</th>
+            <th>Меры защиты</th>
         </tr>
     </thead>
     <tbody>
         {% for risk in risks %}
         {% with risk_level=risk.get_risk_level %}
         <tr>
-            <td>{{ risk.name }}</td>
-            <td>{{ risk.general_object.name }}</td>
             <td>
-                {% for threat in risk.threats.all %}
-                {{ threat.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
+                <a href="{% url 'risk_detail' risk.id %}">{{ risk.name }}</a>
             </td>
-            <td>{{ risk.money_loss }} руб.</td>
             <td>{{ risk_level.value|floatformat:2 }}</td>
             <td>
                 <span class="risk-badge risk-{{ risk_level.class }}">
                     {{ risk_level.text }}
                 </span>
             </td>
+            <td>
+                <a href="{% url 'risk_measures' risk.id %}" class="btn btn-primary btn-sm">
+                    Показать меры
+                </a>
+            </td>
         </tr>
         {% endwith %}
         {% endfor %}
     </tbody>
 </table>
+
 <style>
     .risk-badge {
         padding: 0.35em 0.65em;
@@ -49,5 +48,25 @@
     .risk-high {
         background-color: #f8d7da;
         color: #842029;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+    }
+    .btn-primary {
+        color: #fff;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    a:hover {
+        text-decoration: underline;
     }
 </style>
