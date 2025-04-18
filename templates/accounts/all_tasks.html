@@ -29,21 +29,28 @@
         }
 
         th {
-            background-color: #4CAF50; /* Зеленый фон для заголовков */
-            color: white; /* Белый текст для заголовков */
+            background-color: #4CAF50;
+            color: white;
         }
 
         tr:nth-child(even) {
-            background-color: #f2f2f2; /* Светло-серый фон для четных строк */
+            background-color: #f2f2f2;
         }
 
         tr:hover {
-            background-color: #ddd; /* Серый фон при наведении на строку */
+            background-color: #ddd;
         }
 
         td {
             font-size: 14px;
-            color: #555; /* Темно-серый текст для ячеек */
+            color: #555;
+        }
+
+        select {
+            padding: 5px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -65,7 +72,15 @@
         <tr>
             <td>{{ task.name }}</td>
             <td>{{ task.description }}</td>
-            <td>{{ task.status.name }}</td>
+            <td>
+                <select class="status-select" data-task-id="{{ task.id }}">
+                    {% for status in statuses %}
+                    <option value="{{ status.id }}" {% if task.status and status.id == task.status.id %}selected{% endif %}>
+                        {{ status.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
             <td>{{ task.start_date }}</td>
             <td>{{ task.end_date }}</td>
         </tr>
@@ -76,6 +91,41 @@
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelects = document.querySelectorAll('.status-select');
+
+    statusSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            const taskId = this.dataset.taskId;
+            const newStatusId = this.value;
+
+            fetch(`update_task_status/${taskId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'status_id': newStatusId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Status updated successfully');
+                } else {
+                    console.error('Error updating status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+});
+</script>
 
 </body>
 </html>
