@@ -82,14 +82,8 @@
             <th>Мера защиты</th>
             <th>Подгруппа</th>
             <th>Группа</th>
-            <th>
-                Коэффициент
-                {% if current_sort == 'asc' %}
-                <i class="fas fa-arrow-up ml-1"></i>
-                {% elif current_sort == 'desc' %}
-                <i class="fas fa-arrow-down ml-1"></i>
-                {% endif %}
-            </th>
+            <th>Коэффициент</th>
+            <th>Действие</th>  <!-- Новая колонка -->
         </tr>
     </thead>
     <tbody>
@@ -99,6 +93,12 @@
             <td>{{ measure.subgroup.name }}</td>
             <td>{{ measure.subgroup.group.name }}</td>
             <td>{{ measure.koef }}</td>
+            <td>
+                <button class="btn btn-sm btn-primary select-measure"
+                        data-measure-id="{{ measure.id }}">
+                    Выбрать
+                </button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
@@ -131,13 +131,52 @@
 
 {% if current_view == 'all' %}
 <script>
-    // Сохраняем выбранную группу при изменении сортировки
-    document.querySelectorAll('.btn-group a').forEach(link => {
-        if (link.href.includes('sort=')) {
-            const groupSelect = document.getElementById('group');
-            link.href += '&group=' + groupSelect.value;
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.select-measure').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const measureId = this.dataset.measureId;
+            const btnElement = this;
+
+            // Блокируем кнопку на время запроса
+            btnElement.disabled = true;
+            btnElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Обработка...';
+
+            try {
+                const response = await fetch('/task/tasks/create_from_default_measure/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'measure_id': measureId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Визуальное подтверждение
+                    btnElement.classList.remove('btn-primary');
+                    btnElement.classList.add('btn-success');
+                    btnElement.innerHTML = '✓ Задача создана';
+
+                    // Опционально: перенаправление на список задач
+                    setTimeout(() => {
+                        window.location.href = '/task/tasks/';
+                    }, 1500);
+                } else {
+                    throw new Error(data.error || 'Ошибка сервера');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка: ' + error.message);
+                btnElement.disabled = false;
+                btnElement.innerHTML = 'Выбрать';
+            }
+        });
     });
+});
 </script>
 {% endif %}
 {% endblock %}

@@ -1,10 +1,10 @@
-from django.db.models import Count, Sum
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
-from .models import ThreatWays, GeneralThreats, Ways, UserRisk, DefaultMeasure, DefaultMeasureGroup
+from .models import ThreatWays, Ways, UserRisk, DefaultMeasure, DefaultMeasureGroup
 from .forms import RiskCreationForm
+from django.http import JsonResponse
 
 
 
@@ -132,3 +132,4 @@ def risk_measures(request, risk_id):
         'current_sort': sort,
         'current_view': view_type,
     })
+
