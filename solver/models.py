@@ -103,6 +103,7 @@ class UserRisk(models.Model):
     ways = models.ManyToManyField(Ways)
     created_at = models.DateTimeField(auto_now_add=True)
     money_loss=FloatField()
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username} - {self.general_object.name}"

@@ -1,10 +1,20 @@
 from django import forms
+
+from company.models import Company
 from .models import GeneralObjects, GeneralThreats, UserRisk, Ways
 
 from django import forms
 from .models import UserRisk, GeneralObjects, GeneralThreats, ThreatWays
 
+
 class RiskCreationForm(forms.ModelForm):
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.none(),
+        label="Компания",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True
+    )
+
     general_object = forms.ModelChoiceField(
         queryset=GeneralObjects.objects.all(),
         label="Объект защиты",
@@ -35,4 +45,14 @@ class RiskCreationForm(forms.ModelForm):
 
     class Meta:
         model = UserRisk
-        fields = ['name', 'general_object', 'threats', 'ways', 'money_loss']
+        fields = ['name', 'company', 'general_object', 'threats', 'ways', 'money_loss']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+
+            self.fields['company'].queryset = Company.objects.filter(
+                companyuser__user=user
+            )

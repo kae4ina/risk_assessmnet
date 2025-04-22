@@ -5,6 +5,14 @@
 <form method="post" id="riskForm">
     {% csrf_token %}
 
+
+    <div class="form-group mb-4">
+        {{ form.company.label_tag }}
+        {{ form.company }}
+    </div>
+
+
+
     <div class="form-group mb-4">
         {{ form.name.label_tag }}
         {{ form.name }}

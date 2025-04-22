@@ -7,11 +7,10 @@ from .forms import RiskCreationForm
 from django.http import JsonResponse
 
 
-
 @login_required
 def create_risk(request):
     if request.method == 'POST':
-        form = RiskCreationForm(request.POST)
+        form = RiskCreationForm(request.POST, user=request.user)
         if form.is_valid():
             risk = form.save(commit=False)
             risk.user = request.user
@@ -19,14 +18,13 @@ def create_risk(request):
 
             risk.threats.set(form.cleaned_data['threats'])
 
-
             ways_ids = form.cleaned_data['ways'].split(',')
             ways_ids = [id.strip() for id in ways_ids if id.strip()]
             risk.ways.set(ways_ids)
 
             return redirect('user_risks')
     else:
-        form = RiskCreationForm()
+        form = RiskCreationForm(user=request.user)
 
     return render(request, 'solver/create_risk.html', {'form': form})
 

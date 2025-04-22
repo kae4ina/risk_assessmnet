@@ -78,7 +78,7 @@ def create_task_from_measure(request):
             return JsonResponse({'success': False, 'error': 'Measure not found'}, status=404)
 
         task = Task.objects.create(
-            name=f"Задача для меры {measure.name}",
+            name=measure.name,
             default_measure=measure,
            # related_company=request.user.company,
             status=TaskStatus.objects.first()
