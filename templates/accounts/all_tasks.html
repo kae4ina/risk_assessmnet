@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Tasks</title>
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
@@ -52,13 +52,44 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
+        .company-selector {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .company-selector select {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 <h1>Список задач</h1>
 
+<div class="company-selector">
+    <form method="get" action="">
+        <label for="company-select">Выберите компанию:</label>
+        <select id="company-select" name="company_id" onchange="this.form.submit()">
+            <option value="">Все компании</option>
+            {% for company in user_companies %}
+            <option value="{{ company.id }}"
+                    {% if selected_company_id == company.id %}selected{% endif %}>
+                {{ company.company_name }}
+            </option>
+            {% empty %}
+            <option value="">Нет доступных компаний</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
 <table>
-    <thead>
+<thead>
         <tr>
             <th>Имя задачи</th>
             <th>Описание</th>

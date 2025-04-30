@@ -8,15 +8,33 @@ from measure.models import DefaultMeasure
 from .models import Task, TaskStatus
 from django.http import JsonResponse
 from solver.models import UserRisk
-
+from company.models import Company
 from django.views.decorators.csrf import csrf_exempt
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from company.models import CompanyUser  # Добавляем импорт
+
+
+@login_required
 def task_list(request):
-    tasks = Task.objects.all()
+
+    user_company_relations = CompanyUser.objects.filter(user=request.user).select_related('company')
+    user_companies = [rel.company for rel in user_company_relations]
+
+    selected_company_id = request.GET.get('company_id')
+
+    tasks = Task.objects.filter(user_risk__user=request.user)
+    if selected_company_id:
+        tasks = tasks.filter(user_risk__company_id=selected_company_id)
+
     statuses = TaskStatus.objects.all()
+
     return render(request, 'accounts/all_tasks.html', {
         'tasks': tasks,
-        'statuses': statuses
+        'statuses': statuses,
+        'user_companies': user_companies,
+        'selected_company_id': int(selected_company_id) if selected_company_id else None
     })
 
 
@@ -24,7 +42,7 @@ def task_list(request):
 @require_POST
 def update_task_status(request, task_id):
     try:
-        # Проверка и парсинг JSON
+
         try:
             data = json.loads(request.body)
             status_id = data.get('status_id')
@@ -33,7 +51,7 @@ def update_task_status(request, task_id):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
-        # Получение объектов
+
         try:
             task = Task.objects.get(id=task_id)
             status = TaskStatus.objects.get(id=status_id)
@@ -42,7 +60,7 @@ def update_task_status(request, task_id):
         except TaskStatus.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Status not found'}, status=404)
 
-        # Обновление статуса
+
         task.status = status
         task.save()
 
