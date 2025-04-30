@@ -9,8 +9,13 @@ class AssetForm(forms.ModelForm):
     class Meta:
         model = Asset
         fields = ['name', 'default_asset_type', 'default_asset_category', 'default_asset_value','company']
-
-
+        labels = {
+            "name": "Название актива",
+            "default_asset_type": "Тип актива",
+            "default_asset_category": "Категория актива",
+            "default_asset_value": "Значимость актива",
+            "company": "Компания"
+        }
 
     default_asset_type = forms.ModelChoiceField(queryset=DefaultAssetType.objects.all())
     default_asset_category = forms.ModelChoiceField(queryset=DefaultAssetCategory.objects.all())

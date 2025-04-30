@@ -3,26 +3,32 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 
 from assets.models import Asset
-from .models import UserThreat
+from .models import UserThreat, CompanyThreat, AssetThreat
 from .forms import UserThreatForm
 from django.http import JsonResponse
 
+
 def threat_create_view(request):
     if request.method == 'POST':
-            form = UserThreatForm(request.POST, user=request.user)
-            if form.is_valid():
-                user_threat = form.save(commit=False)
-                user_threat.user=request.user
-                user_threat=form.save()
-                return redirect('threat_saved')
+        form = UserThreatForm(request.POST, initial={'user': request.user})
+        if form.is_valid():
+            threat = form.save()
+            related_assets = form.cleaned_data['related_assets']
+
+
+            for asset in related_assets:
+                AssetThreat.objects.create(threat=threat, asset=asset)
+
+
+            return redirect('threat_saved')
+
     else:
-        form = UserThreatForm(user=request.user)
+        form = UserThreatForm(initial={'user': request.user})
 
-    context = {
-        'form': form,
-    }
+    return render(request, 'threat/threat_create.html', {'form': form})
 
-    return render(request, 'threat/threat_create.html', context)
+
+
 
 def load_assets(request):
     company_id = request.GET.get('company_id')
@@ -30,6 +36,7 @@ def load_assets(request):
     return JsonResponse(list(assets), safe=False)
 
 
+
 def threat_saved(request):
-    return render(request, 'threat/threat_saved.html')
+ return render(request, 'threat/threat_saved.html')
 

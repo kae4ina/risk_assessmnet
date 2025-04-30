@@ -21,5 +21,5 @@ class CompanyUser(models.Model):
     user=models.ForeignKey(User,on_delete=CASCADE)
 
     def __str__(self):
-       return f"{self.user.username}-{self.company.company_name}"
-      # return f"{self.company.company_name}" #иначе отображается и полльзователь и компания
+      # return f"{self.user.username}-{self.company.company_name}"
+      return f"{self.company.company_name}" #иначе отображается и полльзователь и компания

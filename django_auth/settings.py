@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     "vulnerability",
     "threat",
     "risk",
+    "measure",
+    "task",
+    "solver",
 ]
 
 MIDDLEWARE = [
@@ -72,6 +75,7 @@ TEMPLATES = [
         },
     },
 ]
+STATIC_URL = '/static/'
 
 WSGI_APPLICATION = 'django_auth.wsgi.application'
 

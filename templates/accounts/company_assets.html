@@ -9,24 +9,158 @@
 {% extends "base.html" %}
 
 {% block content %}
+<p><strong>Название компании:</strong> {{ assets.first.company.company_name }}</p>
+<p><strong>Область компании:</strong> {{ assets.first.company.default_company_area }}</p>
 
-<h2>Активы компании {{ assets.first.company.company_name }}</h2>
-<ul>
+<div class="container">
+    <div class="left-column">
+        <h2>Активы компании {{ assets.first.company.company_name }}</h2>
+<ul style="list-style-type: none; padding: 0;">
     {% for asset in assets %}
-        <li>{{ asset.name }} - {{ asset.default_asset_value }}</li>
+        <li style="margin-bottom: 20px;">
+            <div class="asset-container">
+                <strong>{{ asset.name }}</strong> - {{ asset.default_asset_value }}
+                <span class="caret" onclick="toggleDetails('{{ asset.id }}')"></span>
+
+                <!-- Скрытые детали для актива -->
+                <div id="details-{{ asset.id }}" class="asset-details" style="display: none;">
+                    <h4>Информация об активе:</h4>
+                    <p><strong>Тип актива:</strong> {{ asset.default_asset_type }}</p>
+                    <p><strong>Категория актива:</strong> {{ asset.default_asset_category }}</p>
+                    <p><strong>Значение актива:</strong> {{ asset.default_asset_value }}</p>
+
+                    <h4>Уязвимости:</h4>
+                    <ul>
+                        {% for vulnerability_asset in asset.user_vulnerabilities %}
+                            <li>
+                                {{ vulnerability_asset.vulnerability.name }} - Вероятность эксплуатации: {{ vulnerability_asset.vulnerability.exploit_possibility }}%
+                            </li>
+                        {% empty %}
+                            <li>Для этого актива нет уязвимостей.</li>
+                        {% endfor %}
+                    </ul>
+
+                    <h4>Угрозы:</h4>
+                    <ul>
+                        {% for threat_asset in asset.user_threats %}
+                            <li>
+                                {{ threat_asset.threat.name }} - Вероятность реализации: {{ threat_asset.threat.possibility }}%
+                            </li>
+                        {% empty %}
+                            <li>Для этого актива нет угроз.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
     {% empty %}
         <li>У этой компании нет активов.</li>
     {% endfor %}
-    <button id="addAsset">Добавить активы</button>
+</ul>
+    </div>
+</div>
+
+
+
+<script>
+    function toggleDetails(assetId) {
+        const detailsDiv = document.getElementById('details-' + assetId);
+        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleRiskDetails(riskId) {
+        const detailsDiv = document.getElementById('risk-details-' + riskId);
+        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+
+<style>
+    .asset-container {
+        border: 2px solid #007BFF; /* Цвет рамки */
+        border-radius: 10px; /* Округлые края */
+        padding: 15px; /* Отступы внутри контейнера */
+        background-color: #f9f9f9; /* Цвет фона */
+        transition: all 0.3s ease; /* Плавный переход */
+        position: relative; /* Для позиционирования стрелки */
+    }
+
+    .caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 10px 0 10px; /* Увеличение размера стрелки */
+        border-color: #007BFF transparent transparent transparent; /* Цвет стрелки */
+        cursor: pointer;
+        margin-left: 10px;
+        transition: transform 0.3s ease; /* Плавный переход для поворота стрелки */
+    }
+
+    .caret.down {
+        transform: rotate(180deg); /* Поворот стрелки при открытии */
+    }
+
+    .asset-details {
+        margin-top: 10px; /* Отступ сверху для деталей */
+        padding: 10px; /* Отступы внутри деталей */
+        border: 1px solid #ddd; /* Цвет рамки деталей */
+        border-radius: 5px; /* Округлые края для деталей */
+        background-color: #fff; /* Цвет фона для деталей */
+
+
+
+    }
+   .button-container {
+    display: flex; /* Используем flexbox для горизонтального расположения */
+    flex-wrap: wrap; /* Позволяет кнопкам переноситься на следующую строку, если не хватает места */
+    gap: 10px; /* Отступы между кнопками */
+}
+
+.btn {
+    padding: 10px 20px; /* Отступы внутри кнопки */
+    background-color: #007bff; /* Цвет фона кнопки */
+    color: white; /* Цвет текста */
+    text-decoration: none; /* Убираем подчеркивание */
+    border-radius: 5px; /* Закругленные углы */
+    transition: background-color 0.3s; /* Плавный переход цвета фона */
+}
+
+.btn:hover {
+    background-color: #0056b3; /* Цвет фона при наведении */
+}
+
+
+</style>
+
+
+    <button id="addAsset" class="btn">Добавить активы</button><br>
     <script>
     document.getElementById("addAsset").onclick = function() {
         window.location.href = "{% url 'assets_choose' %}";
     };
 </script>
-</ul>
-<a href="{% url 'my_companies' %}">Назад к моим компаниям</a>
+<br>
+<div class="button-container">
 
+<a href="{% url 'company_risk' company_id=assets.first.company.id %}" class="btn">
+    Перейти к рискам компании
+</a>
+<br>
+<a href="{% url 'my_companies' %}" class="btn">
+    Назад к моим компаниям
+</a>
+<br>
+<a href="{% url 'vulnerability_create' %}" class="btn">
+    Перейти к созданию уязвимостей
+</a>
+<br>
+<a href="{% url 'threat_create' %}" class="btn">
+    Перейти к созданию угроз
+</a>
+<br>
 
+  </div>
 
 {% endblock %}
 

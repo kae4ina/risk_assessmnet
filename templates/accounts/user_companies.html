@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <title>MyCompanies</title>
 </head>
-<body>
-<!-- templates/accounts/user_companies.html -->
-{% extends "base.html" %}
 
+<body>
 {% block content %}
 <h2>Мои компании</h2>
 <ul>
@@ -16,15 +14,27 @@
             <a href="{% url 'company_assets' company_id=company_user.company.id %}">
                 {{ company_user.company.company_name }}
             </a>
+            <br>
+            <a href="{% url 'company_risk' company_id=company_user.company.id %}">
+                Перейти к рискам
+            </a>
         </li>
     {% empty %}
-        <li>У вас нет компаний.</li>
+        <li>У вас нет компаний </li>
     {% endfor %}
 </ul>
-<button id="addCompany">Добавить компанию</button>
-<a href="{% url 'vulnerability_create' %}">Перейти к уязвимостям</a>
+
+<button id="addCompany" class="btn">Добавить компанию</button>
+
+<div class="button-container">
+    <button onclick="window.location.href='{% url 'vulnerability_create' %}'" class="btn1">Добавить уязвимости</button>
+    <button onclick="window.location.href='{% url 'threat_create' %}'" class="btn1">Добавить угрозы</button>
+    <button onclick="window.location.href='{% url 'risk_create' %}'" class="btn1">Добавить риски </button>
+    <button onclick="window.location.href='{% url 'measure_create' %}'" class="btn1">Добавить меры</button>
+</div>
+
 <br>
-    <a href="{% url 'threat_create' %}">Перейти к угрозам</a>
+
 <script>
     document.getElementById("addCompany").onclick = function() {
         window.location.href = "{% url 'company_create' %}";
@@ -32,5 +42,96 @@
 </script>
 {% endblock %}
 
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .link-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-container a {
+            display: block;
+            margin: 5px 0;
+            color: #007bff;
+        }
+
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Центрируем кнопки */
+            margin-top: 20px; /* Отступ сверху */
+        }
+
+        .btn1 {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007BFF; /* Цвет фона кнопки */
+            color: white; /* Цвет текста */
+            border: none; /* Убираем рамку */
+            border-radius: 5px; /* Закругленные углы */
+            transition: background-color 0.3s; /* Плавный переход цвета */
+            flex: 1 1 200px; /* Ширина кнопок, чтобы они занимали 200px и могли сжиматься */
+            max-width: 200px; /* Максимальная ширина кнопок */
+        }
+
+        .btn1:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+</style>
 </body>
 </html>

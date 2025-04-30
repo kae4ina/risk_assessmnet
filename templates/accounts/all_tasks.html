@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        td {
+            font-size: 14px;
+            color: #555;
+        }
+
+        select {
+            padding: 5px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<h1>Список задач</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Имя задачи</th>
+            <th>Описание</th>
+            <th>Тип меры</th>
+            <th>Статус</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.description }}</td>
+            <td>
+                {% if task.user_measure %}
+                    Пользовательская
+                {% elif task.default_measure %}
+                    Системная
+                {% else %}
+                    Не указана
+                {% endif %}
+            </td>
+            <td>
+                <select class="status-select" data-task-id="{{ task.id }}">
+                    {% for status in statuses %}
+                    <option value="{{ status.id }}" {% if task.status and status.id == task.status.id %}selected{% endif %}>
+                        {{ status.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>{{ task.start_date|default:"-" }}</td>
+            <td>{{ task.end_date|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Задачи не найдены.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция для обработки изменения статуса
+    function handleStatusChange(event) {
+        const selectElement = event.target;
+        const taskId = selectElement.dataset.taskId;
+        const newStatusId = selectElement.value;
+
+        // Визуальная обратная связь
+        selectElement.disabled = true;
+        const originalBorder = selectElement.style.border;
+        selectElement.style.border = '2px solid #ffc107';  // Желтый - обработка
+
+        fetch(`update_task_status/${taskId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'status_id': newStatusId
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Зеленый - успех
+                selectElement.style.border = '2px solid #28a745';
+                console.log('Status updated to:', data.new_status_name);
+            } else {
+                // Красный - ошибка
+                selectElement.style.border = '2px solid #dc3545';
+                console.error('Error:', data.error);
+                // Возвращаем предыдущее значение
+                selectElement.value = selectElement.dataset.previousValue;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            selectElement.style.border = '2px solid #dc3545';
+            selectElement.value = selectElement.dataset.previousValue;
+        })
+        .finally(() => {
+            setTimeout(() => {
+                selectElement.style.border = originalBorder;
+                selectElement.disabled = false;
+            }, 1000);
+        });
+    }
+
+    // Назначаем обработчики и сохраняем начальные значения
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.dataset.previousValue = select.value;
+        select.addEventListener('change', handleStatusChange);
+    });
+});
+</script>
+</body>
+</html>

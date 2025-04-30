@@ -31,6 +31,9 @@ urlpatterns = [
     path('vulnerability/', include('vulnerability.urls')),
     path('threat/',include('threat.urls')),
     path('risk/',include('risk.urls')),
+    path('measure/',include('measure.urls')),
+    path('task/',include('task.urls')),
+    path('solver/', include('solver.urls')),
 
 
 ]

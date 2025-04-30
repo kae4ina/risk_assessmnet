@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Risks and measures</title>
+</head>
+<body>
+<h2>Риски и меры для компании {{ company.company_name }}</h2>
+
+<!-- Отображение рисков -->
+<h3>Риски:</h3>
+<ul>
+    {% for risk in risks %}
+        <li>
+            <strong>{{ risk.name }}</strong>
+            <ul>
+                <li>Связанная угроза: {{ risk.related_threat.name }}</li>
+                <li>Связанная уязвимость: {{ risk.related_vulnerability.name }}</li>
+                <li>Решение: {{ risk.decision.name|default:"Не указано" }}</li>
+                <li>Вероятность реализации риска: {{ risk.risk_probability|floatformat:2 }}%</li>
+            </ul>
+
+            <!-- Отображение мер для риска -->
+            <h4>Меры:</h4>
+            <ul>
+                {% for measure in risk.usermeasure_set.all %}
+                    <li>
+                        <strong>{{ measure.name }}</strong>: {{ measure.description|default:"Описание отсутствует" }}
+                    </li>
+                {% empty %}
+                    <li>Для этого риска нет мер.</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% empty %}
+        <li>Для этой компании нет рисков.</li>
+    {% endfor %}
+</ul>
+
+<!-- Кнопка для добавления риска -->
+<button id="addRisk">Добавить риск</button>
+<script>
+    document.getElementById("addRisk").onclick = function() {
+        window.location.href = "{% url 'add_risk' company.id %}";
+    };
+</script>
+</body>
+</html>

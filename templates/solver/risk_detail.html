@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ risk.name }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="info-section mb-4">
+            <h4>Основная информация</h4>
+            <p><strong>Объект защиты:</strong> {{ risk.general_object.name }}</p>
+            <p><strong>Возможные потери:</strong> {{ risk.money_loss }} руб.</p>
+
+            {% with risk_level=risk.get_risk_level %}
+            <p>
+                <strong>Уровень риска:</strong>
+                <span class="risk-badge risk-{{ risk_level.class }}">
+                    {{ risk_level.text }} ({{ risk_level.value|floatformat:2 }})
+                </span>
+            </p>
+            {% endwith %}
+        </div>
+
+        <div class="threats-section mb-4">
+            <h4>Связанные угрозы</h4>
+            <ul class="list-group">
+                {% for threat in risk.threats.all %}
+                <li class="list-group-item">{{ threat.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="ways-section mb-4">
+            <h4>Способы реализации</h4>
+            <ul class="list-group">
+                {% for way in risk.ways.all %}
+                <li class="list-group-item">{{ way.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="action-buttons mt-4">
+            <a href="{% url 'risk_measures' risk.id %}" class="btn btn-primary btn-sm">
+                Показать меры защиты
+            </a>
+            <a href="{% url 'user_risks' %}" class="btn btn-secondary">
+                Вернуться к списку рисков
+            </a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

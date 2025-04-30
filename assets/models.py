@@ -5,21 +5,21 @@ from company.models import Company
 
 
 class DefaultAssetCategory(models.Model):
-    default_asset_category = models.CharField(max_length=100)
+    default_asset_category = models.CharField(max_length=100,verbose_name="Категория актива")
 
     def __str__(self):
         return self.default_asset_category
 
 
 class DefaultAssetValue(models.Model):
-    default_asset_value = models.CharField(max_length=100)
+    default_asset_value = models.CharField(max_length=100,verbose_name="Значимость актива")
 
     def __str__(self):
         return self.default_asset_value
 
 
 class DefaultAssetType(models.Model):
-    default_asset_type = models.CharField(max_length=100)
+    default_asset_type = models.CharField(max_length=100,verbose_name="Тип актива")
 
     def __str__(self):
         return self.default_asset_type
