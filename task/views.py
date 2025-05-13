@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from measure.models import DefaultMeasure
-from .models import Task, TaskStatus
+from .models import Task, TaskStatus, TaskRisk
 from django.http import JsonResponse
 from solver.models import UserRisk
 from company.models import Company
@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from company.models import CompanyUser  # Добавляем импорт
+from company.models import CompanyUser
 
 
 @login_required
@@ -22,11 +22,19 @@ def task_list(request):
     user_company_relations = CompanyUser.objects.filter(user=request.user).select_related('company')
     user_companies = [rel.company for rel in user_company_relations]
 
+
     selected_company_id = request.GET.get('company_id')
 
-    tasks = Task.objects.filter(user_risk__user=request.user)
+
+    tasks = Task.objects.filter(
+        risk_relations__risk__user=request.user
+    ).distinct()
+
+
     if selected_company_id:
-        tasks = tasks.filter(user_risk__company_id=selected_company_id)
+        tasks = tasks.filter(
+            risk_relations__risk__company_id=selected_company_id
+        )
 
     statuses = TaskStatus.objects.all()
 
@@ -36,7 +44,6 @@ def task_list(request):
         'user_companies': user_companies,
         'selected_company_id': int(selected_company_id) if selected_company_id else None
     })
-
 
 @csrf_exempt
 @require_POST
@@ -82,9 +89,6 @@ from .models import Task, DefaultMeasure
 
 @csrf_exempt
 @require_POST
-
-@csrf_exempt
-@require_POST
 def create_task_from_measure(request):
     try:
         data = json.loads(request.body)
@@ -97,23 +101,30 @@ def create_task_from_measure(request):
         try:
             measure = DefaultMeasure.objects.get(id=measure_id)
             risk = UserRisk.objects.get(id=risk_id)
+
+
+            task = Task.objects.create(
+                name=measure.name,
+                default_measure=measure,
+                status=TaskStatus.objects.get(id=3)
+            )
+
+
+            TaskRisk.objects.create(
+                task=task,
+                risk=risk
+            )
+
+            return JsonResponse({
+                'success': True,
+                'task_id': task.id,
+                'measure_id': measure.id
+            })
+
         except DefaultMeasure.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Measure not found'}, status=404)
         except UserRisk.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Risk not found'}, status=404)
-
-        task = Task.objects.create(
-            name=measure.name,
-            default_measure=measure,
-            user_risk=risk,
-            status=TaskStatus.objects.first()
-        )
-
-        return JsonResponse({
-            'success': True,
-            'task_id': task.id,
-            'measure_id': measure.id
-        })
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)

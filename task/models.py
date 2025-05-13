@@ -33,13 +33,13 @@ class Task(models.Model):
         related_name='tasks'
     )
 
-    user_risk = models.ForeignKey(
+    """  user_risk = models.ForeignKey(
         to='solver.UserRisk',
         on_delete=models.CASCADE,
         related_name='tasks'
-    )
+    )"""
 
-    status = models.ForeignKey(to=TaskStatus, on_delete=models.CASCADE, null=True, blank=True)
+    status = models.ForeignKey(to=TaskStatus, on_delete=models.CASCADE, null=True, blank=True, default=3)
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 
@@ -60,3 +60,12 @@ class Task(models.Model):
             raise ValidationError("Задача может быть связана только с одной мерой (пользовательской или системной)")
         if not self.user_measure and not self.default_measure:
             raise ValidationError("Задача должна быть связана с мерой (пользовательской или системной)")
+
+
+class TaskRisk(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='risk_relations')
+    risk = models.ForeignKey('solver.UserRisk', on_delete=models.CASCADE)
+
+
+    class Meta:
+        unique_together = [('task', 'risk')]  # Исключаем дублирование
