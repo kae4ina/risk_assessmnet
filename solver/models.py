@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import ForeignKey, CASCADE, FloatField, CharField
+from django.db.models import ForeignKey, CASCADE, FloatField, CharField, Min
 
 from assets.models import DefaultAssetCategory
 
@@ -111,7 +111,7 @@ class UserRisk(models.Model):
     @property
     def risk_score(self):
         """
-        степень риска:
+        Степень риска:
         Σ (possibility_of_occurrence * 100 * possibility_of_success) * money_loss
         где сумма берется по всем связанным угрозам
         """
@@ -123,9 +123,36 @@ class UserRisk(models.Model):
 
         return total_risk * self.money_loss
 
+    @property
+    def current_risk_score(self):
+
+        completed_measures = DefaultMeasure.objects.filter(
+            tasks__risk_relations__risk=self,
+            tasks__status_id=1
+        )
+
+        if not completed_measures.exists():
+            return self.risk_score
+
+        min_koef = completed_measures.aggregate(min=Min('koef'))['min']
+        return self.mitigated_risk_score(min_koef)
+
+    def mitigated_risk_score(self, measure_koef):
+        """
+        Степень риска после применения меры с коэффициентом measure_koef
+        Σ (|threat.possibility_of_occurrence - measure_koef| * 100 * possibility_of_success) * money_loss
+        """
+        total_risk = 0
+        for threat in self.threats.all():
+            adjusted_possibility = abs(threat.possibility_of_occurrence - measure_koef)
+            threat_risk = (adjusted_possibility * 100 * threat.possibility_of_success)
+            total_risk += threat_risk
+
+        return total_risk * self.money_loss
+
     def get_risk_level(self):
 
-        score = self.risk_score
+        score = self.current_risk_score
         if score < 500000:
             level = "Низкий"
         elif 500000 <= score < 10000000:

@@ -9,20 +9,30 @@
     </thead>
     <tbody>
         {% for risk in risks %}
-        {% with risk_level=risk.get_risk_level %}
+        {% with risk_level=risk.get_risk_level current_score=risk.current_risk_score %}
         <tr>
             <td>
                 <a href="{% url 'risk_detail' risk.id %}">{{ risk.name }}</a>
             </td>
-            <td>{{ risk_level.value|floatformat:2 }}</td>
+            <td>
+                {{ current_score|floatformat:2 }}
+                {% if current_score != risk.risk_score %}
+                <small class="text-muted d-block">
+                    <s>{{ risk.risk_score|floatformat:2 }}</s>
+                </small>
+                {% endif %}
+            </td>
             <td>
                 <span class="risk-badge risk-{{ risk_level.class }}">
                     {{ risk_level.text }}
+                    {% if current_score != risk.risk_score %}
+                    <i class="fas fa-check-circle ml-1" title="Учтены выполненные меры"></i>
+                    {% endif %}
                 </span>
             </td>
             <td>
                 <a href="{% url 'risk_measures' risk.id %}" class="btn btn-primary btn-sm">
-                    Показать меры
+                    Показать меры ({{ risk.taskrisk_set.count }})
                 </a>
             </td>
         </tr>
@@ -30,6 +40,21 @@
         {% endfor %}
     </tbody>
 </table>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обновляем данные каждые 30 секунд
+    setInterval(function() {
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(html, 'text/html');
+                const newTable = newDoc.querySelector('.table tbody');
+                document.querySelector('.table tbody').innerHTML = newTable.innerHTML;
+            });
+    }, 30000);
+});
+</script>
 
 <style>
     .risk-badge {

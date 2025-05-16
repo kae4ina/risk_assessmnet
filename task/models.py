@@ -43,12 +43,41 @@ class Task(models.Model):
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 
+    name = models.CharField(max_length=150)
+    description = models.CharField(max_length=1000, null=True, blank=True)
+
+    default_measure = models.ForeignKey(
+        to=DefaultMeasure,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='tasks'
+    )
+
+    user_measure = models.ForeignKey(
+        to=UserMeasure,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='tasks'
+    )
+
+    """  user_risk = models.ForeignKey(
+        to='solver.UserRisk',
+        on_delete=models.CASCADE,
+        related_name='tasks'
+    )"""
+
+    status = models.ForeignKey(to=TaskStatus, on_delete=models.CASCADE, null=True, blank=True, default=3)
+    start_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return f"Task: {self.name}"
 
     @property
     def company(self):
-        """Получаем компанию через связанный риск"""
+
         return self.user_risk.company
 
     @property
@@ -66,6 +95,6 @@ class TaskRisk(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='risk_relations')
     risk = models.ForeignKey('solver.UserRisk', on_delete=models.CASCADE)
 
-
     class Meta:
         unique_together = [('task', 'risk')]  # Исключаем дублирование
+
