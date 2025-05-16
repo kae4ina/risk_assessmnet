@@ -91,27 +91,27 @@ def risk_detail(request, risk_id):
 
 @login_required
 def risk_measures(request, risk_id):
-    risk = get_object_or_404(UserRisk.objects.prefetch_related('threats'), pk=risk_id, user=request.user)
+    risk = get_object_or_404(UserRisk, pk=risk_id, user=request.user)
     threat_ids = risk.threats.values_list('id', flat=True)
 
-    # базовый queryset мер
+    # Базовый queryset мер
     measures = DefaultMeasure.objects.filter(
         rulesthreat__threat_id__in=threat_ids
     ).select_related('subgroup__group').distinct()
 
-    #  топ-10 мер
+    # Топ-10 мер
     top_measures = measures.order_by('-koef')[:10]
 
+    # Самые эффективные меры (коэф. ≥ 0.8)
+    effective_measures = measures.filter(koef__gte=0.8).order_by('-koef')
 
     view_type = request.GET.get('view', 'all')
     sort = request.GET.get('sort')
     group_filter = request.GET.get('group')
 
-    # фильтры только для режима "все меры"
     if view_type == 'all':
         if group_filter:
             measures = measures.filter(subgroup__group_id=group_filter)
-
         if sort == 'asc':
             measures = measures.order_by('koef')
         elif sort == 'desc':
@@ -125,6 +125,7 @@ def risk_measures(request, risk_id):
         'risk': risk,
         'measures': measures,
         'top_measures': top_measures,
+        'effective_measures': effective_measures,
         'measure_groups': measure_groups,
         'selected_group': group_filter,
         'current_sort': sort,

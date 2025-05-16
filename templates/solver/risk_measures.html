@@ -15,6 +15,10 @@
            class="btn btn-outline-primary {% if current_view == 'top' %}active{% endif %}">
             Топ-10 мер
         </a>
+        <a href="?view=effective"
+           class="btn btn-outline-primary {% if current_view == 'effective' %}active{% endif %}">
+            Самые эффективные
+        </a>
     </div>
 
     {% if current_view == 'all' %}
@@ -61,6 +65,7 @@
                     <th>Мера защиты</th>
                     <th>Коэффициент</th>
                     <th>Группа</th>
+                    <th>Действие</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,6 +74,45 @@
                     <td>{{ measure.name }}</td>
                     <td>{{ measure.koef }}</td>
                     <td>{{ measure.subgroup.group.name }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary select-measure"
+                                data-measure-id="{{ measure.id }}">
+                            Выбрать
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% elif current_view == 'effective' %}
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h4>Самые эффективные меры (коэф. ≥ 0.8)</h4>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Мера защиты</th>
+                    <th>Коэффициент</th>
+                    <th>Группа</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for measure in effective_measures %}
+                <tr>
+                    <td>{{ measure.name }}</td>
+                    <td>{{ measure.koef }}</td>
+                    <td>{{ measure.subgroup.group.name }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary select-measure"
+                                data-measure-id="{{ measure.id }}">
+                            Выбрать
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -83,7 +127,7 @@
             <th>Подгруппа</th>
             <th>Группа</th>
             <th>Коэффициент</th>
-            <th>Действие</th>  <!-- Новая колонка -->
+            <th>Действие</th>
         </tr>
     </thead>
     <tbody>
@@ -127,15 +171,18 @@
         top: 0;
         background-color: #f8f9fa;
     }
+    .card-header h4 {
+        margin-bottom: 0;
+    }
 </style>
 
-{% if current_view == 'all' %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Обработчик для всех кнопок выбора мер
     document.querySelectorAll('.select-measure').forEach(btn => {
         btn.addEventListener('click', async function() {
             const measureId = this.dataset.measureId;
-            const riskId = "{{ risk.id }}";  // Получаем risk_id из контекста шаблона
+            const riskId = "{{ risk.id }}";
             const btnElement = this;
 
             btnElement.disabled = true;
@@ -150,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         'measure_id': measureId,
-                        'risk_id': riskId  // Добавляем risk_id
+                        'risk_id': riskId
                     })
                 });
 
@@ -161,6 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     btnElement.classList.add('btn-success');
                     btnElement.innerHTML = '✓ Задача создана';
 
+                    // Перенаправление с задержкой
                     setTimeout(() => {
                         window.location.href = '/task/tasks/';
                     }, 1500);
@@ -177,5 +225,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-{% endif %}
 {% endblock %}
