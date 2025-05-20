@@ -15,3 +15,7 @@ class CustomUserCreationForm(UserCreationForm):
             self.fields['email'].help_text = None
             self.fields['password1'].help_text = None
             self.fields['password2'].help_text = None
+            self.fields['username'].widget.attrs['placeholder'] = 'Введите имя пользователя'
+            self.fields['email'].widget.attrs['placeholder'] = 'Введите ваш email'
+            self.fields['password1'].widget.attrs['placeholder'] = 'Введите пароль'
+            self.fields['password2'].widget.attrs['placeholder'] = 'Повторите пароль'

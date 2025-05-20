@@ -5,97 +5,196 @@
     <title>Создание компании</title>
     <style>
         body {
-            font-family: Arial, sans-serif; /* Шрифт для текста */
-            background-color: #f4f4f4; /* Фоновый цвет страницы */
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             margin: 0;
-            padding: 20px; /* Отступы для всего тела */
+            padding: 30px;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+          select {
+            width: 100%;
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            color: #333333;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23663399'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+        }
+
+        /* Изменение цвета выделения в выпадающем списке */
+        select option:checked {
+            background-color: #9c6ad6; /* Фиолетовый цвет для выбранного элемента */
+            color: white;
+        }
+
+          select option:hover {
+            background-color: #e6d5f9 !important; /* Светло-фиолетовый при наведении */
         }
 
         h1 {
-            text-align: center; /* Центрируем заголовок */
-            color: #333; /* Цвет заголовка */
+            color: #9c6ad6;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 0 2px 4px rgba(156, 106, 214, 0.3);
         }
 
-        form {
-            background-color: #fff; /* Белый фон для формы */
-            padding: 20px; /* Отступы внутри формы */
-            border-radius: 5px; /* Закругленные углы */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
-            max-width: 500px; /* Максимальная ширина формы */
-            margin: 20px auto; /* Центрируем форму */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        button {
-            background-color: #28a745; /* Цвет кнопки */
-            color: white; /* Цвет текста кнопки */
-            border: none; /* Убираем границу */
-            padding: 10px 15px; /* Отступы внутри кнопки */
-            border-radius: 5px; /* Закругленные углы */
-            cursor: pointer; /* Указатель при наведении */
-            font-size: 16px; /* Размер шрифта */
-            transition: background-color 0.3s; /* Плавный переход цвета */
+        .messages {
+            margin-bottom: 30px;
         }
 
-        button:hover {
-            background-color: #218838; /* Цвет кнопки при наведении */
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #28a745;
+            text-align: center;
         }
 
-        a {
-            display: inline-block; /* Делаем ссылки блочными элементами */
-            margin: 10px 0; /* Отступы сверху и снизу */
-            color: #007bff; /* Цвет ссылок */
-            text-decoration: none; /* Убираем подчеркивание */
-            font-size: 16px; /* Размер шрифта */
+        .form-section {
+            background: rgba(30, 30, 30, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(156, 106, 214, 0.6),
+                        0 0 60px rgba(156, 106, 214, 0.3);
+            border: 1px solid #9c6ad6;
+            margin-bottom: 30px;
+            transition: box-shadow 0.3s ease;
         }
 
-        a:hover {
-            text-decoration: underline; /* Подчеркивание при наведении */
+        .form-section:hover {
+            box-shadow: 0 0 40px rgba(156, 106, 214, 0.8),
+                        0 0 80px rgba(156, 106, 214, 0.4);
         }
-         .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #007BFF; /* Цвет фона кнопки */
-            color: white; /* Цвет текста */
-            text-decoration: none; /* Убираем подчеркивание */
-            border-radius: 5px; /* Закругленные углы */
-            transition: background-color 0.3s; /* Плавный переход цвета */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(50, 50, 50, 0.5);
+            border: 1px solid #333333;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #9c6ad6;
+            outline: none;
+            box-shadow: 0 0 10px rgba(156, 106, 214, 0.5);
+        }
+
+        .btn {
+            background-color: #663399;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.4);
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
         }
 
         .btn:hover {
-            background-color: #0056b3; /* Цвет кнопки при наведении */
+            background-color: #7d48b1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.6);
+        }
+
+        .btn-primary {
+            margin-top: 20px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 600px) {
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-   <h1>Мои компании</h1>
+    <div class="container">
+        <h1>Создание компании</h1>
 
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-section">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Создать компанию</button>
+            </form>
         </div>
-    {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Создать</button>
-    </form>
-    <br>
-    <a href="{% url 'assets_choose' %}">Перейти к созданию активов</a>
-
-    <br>
- <div class="buttons">
-    <a href="{% url 'vulnerability_create' %}" class="btn">Перейти к созданию уязвимостей</a>
-    <br>
-    <a href="{% url 'threat_create' %}" class="btn">Перейти к созданию угроз</a>
-    <br>
-    <a href="{% url 'risk_create' %}" class="btn">Перейти к созданию рисков</a>
-    <br>
-    <a href="{% url 'measure_create' %}" class="btn">Перейти к созданию мер</a>
-</div>
-
+        <div class="actions-grid">
+            <a href="{% url 'assets_choose' %}" class="btn">Создание активов</a>
+            <a href="{% url 'vulnerability_create' %}" class="btn">Создание уязвимостей</a>
+            <a href="{% url 'threat_create' %}" class="btn">Создание угроз</a>
+            <a href="{% url 'risk_create' %}" class="btn">Создание рисков</a>
+            <a href="{% url 'measure_create' %}" class="btn">Создание мер</a>
+        </div>
+    </div>
 </body>
 </html>

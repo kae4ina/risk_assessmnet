@@ -3,24 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <title>MyCompanies</title>
-</head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #2a2a2a; /* Серый фон */
+            margin: 0;
+            padding: 30px;
+            color: #000000; /* Черный текст */
+            min-height: 100vh;
+        }
 
+        h2 {
+            color: #9c6ad6;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 0 2px 4px rgba(156, 106, 214, 0.3);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        li {
+            background: #e0e0e0; /* Светло-серый фон для блоков */
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #cccccc;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:hover {
+            border-color: #9c6ad6;
+            box-shadow: 0 0 20px rgba(156, 106, 214, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .company-info {
+            flex-grow: 1;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .company-name:hover {
+            color: #663399;
+        }
+
+        .risk-link-container {
+            margin-left: 20px;
+        }
+
+        .risk-link {
+            display: inline-block;
+            background: rgba(102, 51, 153, 0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: #663399;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .risk-link:hover {
+            background: rgba(102, 51, 153, 0.3);
+            color: #000000;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666666;
+            font-size: 16px;
+            padding: 20px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+
+        .btn {
+            background-color: #663399;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: block;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.4);
+        }
+
+        .btn:hover {
+            background-color: #7d48b1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.6);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .btn1 {
+            padding: 12px 20px;
+            background-color: rgba(102, 51, 153, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            flex: 1 1 200px;
+            max-width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn1:hover {
+            background-color: rgba(156, 106, 214, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(156, 106, 214, 0.4);
+        }
+    </style>
+</head>
 <body>
 {% block content %}
 <h2>Мои компании</h2>
 <ul>
     {% for company_user in company_users %}
         <li>
-            <a href="{% url 'company_assets' company_id=company_user.company.id %}">
-                {{ company_user.company.company_name }}
-            </a>
-            <br>
-            <a href="{% url 'company_risk' company_id=company_user.company.id %}">
-                Перейти к рискам
-            </a>
+            <div class="company-info">
+                <a href="{% url 'company_assets' company_id=company_user.company.id %}" class="company-name">
+                    {{ company_user.company.company_name }}
+                </a>
+            </div>
+            <div class="risk-link-container">
+                <a href="/solver/my-risks/" class="risk-link">
+                    Перейти к рискам →
+                </a>
+            </div>
         </li>
     {% empty %}
-        <li>У вас нет компаний </li>
+        <li class="empty-message">У вас нет компаний</li>
     {% endfor %}
 </ul>
 
@@ -29,11 +172,9 @@
 <div class="button-container">
     <button onclick="window.location.href='{% url 'vulnerability_create' %}'" class="btn1">Добавить уязвимости</button>
     <button onclick="window.location.href='{% url 'threat_create' %}'" class="btn1">Добавить угрозы</button>
-    <button onclick="window.location.href='{% url 'risk_create' %}'" class="btn1">Добавить риски </button>
+    <button onclick="window.location.href='{% url 'risk_create' %}'" class="btn1">Добавить риски</button>
     <button onclick="window.location.href='{% url 'measure_create' %}'" class="btn1">Добавить меры</button>
 </div>
-
-<br>
 
 <script>
     document.getElementById("addCompany").onclick = function() {
@@ -41,97 +182,5 @@
     };
 </script>
 {% endblock %}
-
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #333;
-            text-align: center;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            background: #fff;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            display: block;
-            margin: 20px auto;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .link-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .link-container a {
-            display: block;
-            margin: 5px 0;
-            color: #007bff;
-        }
-
-        .link-container a:hover {
-            text-decoration: underline;
-        }
-
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center; /* Центрируем кнопки */
-            margin-top: 20px; /* Отступ сверху */
-        }
-
-        .btn1 {
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #007BFF; /* Цвет фона кнопки */
-            color: white; /* Цвет текста */
-            border: none; /* Убираем рамку */
-            border-radius: 5px; /* Закругленные углы */
-            transition: background-color 0.3s; /* Плавный переход цвета */
-            flex: 1 1 200px; /* Ширина кнопок, чтобы они занимали 200px и могли сжиматься */
-            max-width: 200px; /* Максимальная ширина кнопок */
-        }
-
-        .btn1:hover {
-            background-color: #0056b3; /* Цвет кнопки при наведении */
-        }
-</style>
 </body>
 </html>

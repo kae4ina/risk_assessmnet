@@ -1,97 +1,226 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Название риска</th>
-            <th>Степень риска</th>
-            <th>Уровень риска</th>
-            <th>Меры защиты</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for risk in risks %}
-        {% with risk_level=risk.get_risk_level current_score=risk.current_risk_score %}
-        <tr>
-            <td>
-                <a href="{% url 'risk_detail' risk.id %}">{{ risk.name }}</a>
-            </td>
-            <td>
-                {{ current_score|floatformat:2 }}
-                {% if current_score != risk.risk_score %}
-                <small class="text-muted d-block">
-                    <s>{{ risk.risk_score|floatformat:2 }}</s>
-                </small>
-                {% endif %}
-            </td>
-            <td>
-                <span class="risk-badge risk-{{ risk_level.class }}">
-                    {{ risk_level.text }}
-                    {% if current_score != risk.risk_score %}
-                    <i class="fas fa-check-circle ml-1" title="Учтены выполненные меры"></i>
-                    {% endif %}
-                </span>
-            </td>
-            <td>
-                <a href="{% url 'risk_measures' risk.id %}" class="btn btn-primary btn-sm">
-                    Показать меры ({{ risk.taskrisk_set.count }})
-                </a>
-            </td>
-        </tr>
-        {% endwith %}
-        {% endfor %}
-    </tbody>
-</table>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Обновляем данные каждые 30 секунд
-    setInterval(function() {
-        fetch(window.location.href)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const newDoc = parser.parseFromString(html, 'text/html');
-                const newTable = newDoc.querySelector('.table tbody');
-                document.querySelector('.table tbody').innerHTML = newTable.innerHTML;
-            });
-    }, 30000);
-});
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Таблица рисков</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a; /* Темный фон всей страницы */
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-<style>
-    .risk-badge {
-        padding: 0.35em 0.65em;
-        border-radius: 0.25rem;
-        font-weight: 700;
-    }
-    .risk-low {
-        background-color: #d1e7dd;
-        color: #0f5132;
-    }
-    .risk-medium {
-        background-color: #fff3cd;
-        color: #664d03;
-    }
-    .risk-high {
-        background-color: #f8d7da;
-        color: #842029;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        border-radius: 0.2rem;
-    }
-    .btn-primary {
-        color: #fff;
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
+        h1 {
+            color: #9c6ad6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
+        .risk-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .risk-table th {
+            background-color: #663399;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: none;
+        }
+
+        .risk-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333333;
+            color: #000000;
+            background-color: #e0e0e0;
+        }
+
+        .risk-table tr:not(:last-child) td {
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .risk-table tr:hover td {
+            background-color: #d0d0d0;
+        }
+
+        .risk-link {
+            color: #663399;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .risk-link:hover {
+            color: #9c6ad6;
+            text-decoration: underline;
+        }
+
+        .risk-score {
+            font-family: monospace;
+            font-size: 16px;
+            color: #333333;
+        }
+
+        .previous-score {
+            color: #666666;
+            display: block;
+            font-size: 0.8em;
+        }
+
+        .risk-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .risk-low {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .risk-medium {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+
+        .risk-high {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        .measure-btn {
+            background-color: #663399;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .measure-btn:hover {
+            background-color: #7d48b1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .fa-check-circle {
+            margin-left: 5px;
+            color: #28a745;
+        }
+
+        /* Дополнительные элементы интерфейса */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #663399;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #7d48b1;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 ">Таблица рисков</h1>
+            <button class="btn" onclick="location.href='{% url 'create_risk' %}'">Добавить риск</button>
+        </div>
+
+        <table class="risk-table">
+            <thead>
+                <tr>
+                    <th>Название риска</th>
+                    <th>Степень риска</th>
+                    <th>Уровень риска</th>
+                    <th>Меры защиты</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for risk in risks %}
+                {% with risk_level=risk.get_risk_level current_score=risk.current_risk_score %}
+                <tr>
+                    <td>
+                        <a href="{% url 'risk_detail' risk.id %}" class="risk-link">{{ risk.name }}</a>
+                    </td>
+                    <td class="risk-score">
+                        {{ current_score|floatformat:2 }}
+                        {% if current_score != risk.risk_score %}
+                        <small class="previous-score">
+                            <s>{{ risk.risk_score|floatformat:2 }}</s>
+                        </small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="risk-badge risk-{{ risk_level.class }}">
+                            {{ risk_level.text }}
+                            {% if current_score != risk.risk_score %}
+                            <i class="fas fa-check-circle" title="Учтены выполненные меры"></i>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'risk_measures' risk.id %}" class="measure-btn">
+                            Показать меры ({{ risk.taskrisk_set.count }})
+                        </a>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Обновляем данные каждые 30 секунд
+        setInterval(function() {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const newDoc = parser.parseFromString(html, 'text/html');
+                    const newTable = newDoc.querySelector('.risk-table tbody');
+                    document.querySelector('.risk-table tbody').innerHTML = newTable.innerHTML;
+                });
+        }, 30000);
+    });
+    </script>
+</body>
+</html>

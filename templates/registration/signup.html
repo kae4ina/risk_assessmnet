@@ -7,28 +7,48 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f4f8;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            color: #ffffff;
         }
 
         h2 {
-            color: #333;
+            color: #9c6ad6;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(156, 106, 214, 0.3);
         }
 
         form {
-            background: #ffffff;
+            background: rgba(30, 30, 30, 0.9);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 0 30px rgba(156, 106, 214, 0.6),
+                        0 0 60px rgba(156, 106, 214, 0.3);
+            border: 1px solid #9c6ad6;
+            width: 350px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        form:hover {
+            box-shadow: 0 0 40px rgba(156, 106, 214, 0.8),
+                        0 0 80px rgba(156, 106, 214, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 14px;
         }
 
         input[type="text"],
@@ -36,46 +56,115 @@
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
+            background: rgba(50, 50, 50, 0.5);
+            border: 1px solid #333333;
             border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 14px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #9c6ad6;
+            outline: none;
+            box-shadow: 0 0 10px rgba(156, 106, 214, 0.5);
         }
 
         button {
-            background-color: #28a745;
+            background-color: #663399;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.4);
         }
 
         button:hover {
-            background-color: #218838;
+            background-color: #7d48b1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.6);
         }
 
         .error {
-            color: red;
+            color: #ff6b6b;
             font-size: 14px;
-            margin-top: 10px;
-            display: none; /* Скрываем по умолчанию */
+            margin: 5px 0;
+        }
+
+        .password-requirements {
+            color: #aaaaaa;
+            font-size: 12px;
+            margin-top: 5px;
+            padding-left: 15px;
+        }
+
+        .password-requirements li {
+            margin-bottom: 3px;
+        }
+
+        .password-requirements .valid {
+            color: #6bd66b;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #9c6ad6;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #ffffff;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <h1>Регистрация</h1>
 
+            <div class="form-group">
+                <label for="id_username">Имя пользователя</label>
+                <input type="text" id="id_username" name="username" placeholder="Введите имя пользователя" required>
+            </div>
 
-<form method="post">
-    {% csrf_token %}
-    <h2>Sign Up</h2>
-    {{ form.as_p }}  <!-- Отображаем форму без требований к паролю -->
-    <button type="submit">Sign Up</button>
-</form>
+            <div class="form-group">
+                <label for="id_email">Электронная почта</label>
+                <input type="email" id="id_email" name="email" placeholder="Введите ваш email" required>
+            </div>
 
+            <div class="form-group">
+                <label for="id_password1">Пароль</label>
+                <input type="password" id="id_password1" name="password1" placeholder="Введите пароль" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password2">Подтверждение пароля</label>
+                <input type="password" id="id_password2" name="password2" placeholder="Повторите пароль" required>
+            </div>
+
+            <hr class="divider">
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
 <script>
     const passwordInput = document.querySelector('input[type="password"]');
     const passwordRequirements = document.getElementById('passwordRequirements');

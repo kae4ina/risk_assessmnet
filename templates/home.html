@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <style>
+     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #e9f7ef 0%, #d1e7dd 100%);
-            color: #333;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -17,16 +17,17 @@
         }
 
         header {
-            background-color: #007BFF;
+            background-color: #000000;
             padding: 20px;
             display: flex;
             align-items: center;
+            border-bottom: 1px solid #333333;
         }
 
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: white;
+            color: #ffffff;
         }
 
         main {
@@ -40,28 +41,33 @@
         }
 
         .content {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(30, 30, 30, 0.9);
             border-radius: 10px;
             padding: 40px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+             box-shadow: 0 0 30px rgba(156, 106, 214, 0.6), /* Основная тень */
+                0 0 60px rgba(156, 106, 214, 0.3); /* Дополнительное свечение */
+             border: 1px solid #9c6ad6;
             z-index: 1;
+            max-width: 600px;
         }
 
         h1 {
             font-size: 36px;
-            color: #007BFF;
+            color: #9c6ad6;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(156, 106, 214, 0.3);
         }
 
         p {
             font-size: 18px;
-            color: #555;
+            color: #cccccc;
             margin-bottom: 30px;
         }
 
         .buttons {
             display: flex;
             justify-content: center;
+            gap: 15px;
         }
 
         .btn {
@@ -69,28 +75,35 @@
             padding: 15px 25px;
             border-radius: 5px;
             color: white;
-            margin: 0 10px;
             font-size: 16px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         .login {
-            background-color: #007BFF;
+            background-color: #663399;
+            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.4);
         }
 
         .signup {
-            background-color: #28a745;
+            background-color: #333333;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .btn:hover {
-            opacity: 0.8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.5);
         }
 
         footer {
             text-align: center;
-            padding: 10px 0;
-            background-color: #007BFF;
-            color: white;
+            padding: 15px 0;
+            background-color: #000000;
+            color: #aaaaaa;
+            border-top: 1px solid #333333;
+            font-size: 14px;
         }
 
         /* Анимация */
@@ -102,18 +115,26 @@
             opacity: 0;
             animation: fadeIn 1s forwards;
             z-index: 0;
+            filter: grayscale(100%) brightness(0.5);
         }
 
         @keyframes fadeIn {
             to {
-                opacity: 1;
+                opacity: 0.2;
             }
         }
 
         img {
-            width: 150px; /* Ширина изображений */
+            width: 120px;
             height: auto;
             margin: 10px;
+            opacity: 0.8;
+        }
+
+        /* Эффекты для аутентифицированного пользователя */
+        .authenticated {
+            border: 1px solid #9c6ad6;
+            box-shadow: 0 0 20px rgba(156, 106, 214, 0.3);
         }
     </style>
 </head>

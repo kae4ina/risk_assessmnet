@@ -23,7 +23,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path('mainmenu',TemplateView.as_view(template_name="main_menu.html"),name="mainmenu"),# new
     path("accounts/", include("django.contrib.auth.urls")),
-    path("", TemplateView.as_view(template_name="zero_page.html"), name="start"),
+    path("", TemplateView.as_view(template_name="home.html"), name="start"),
     path("home", TemplateView.as_view(template_name="home.html"), name="home"),
     path('assets/', include('assets.urls')),  # Подключаем URL-адреса приложения assets
     #path('login/', views.login_view, name='login'),
