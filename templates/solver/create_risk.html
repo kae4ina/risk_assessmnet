@@ -288,6 +288,24 @@
     </div>
 
     <button type="submit" class="submit-btn">Сохранить</button>
+
+<div class="container">
+    <!-- Кнопки в правом верхнем углу -->
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;">
+
+        <button style="background-color: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.3s;"
+                onmouseover="this.style.backgroundColor='var(--primary-dark)'"
+                onmouseout="this.style.backgroundColor='var(--primary-color)'"
+                onclick="window.location.href='{% url 'my_companies' %}'">
+            Мои компании
+        </button>
+        <button style="background-color: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.3s;"
+                onmouseover="this.style.backgroundColor='var(--primary-dark)'"
+                onmouseout="this.style.backgroundColor='var(--primary-color)'"
+                onclick="window.location.href='{% url 'task_list' %}'">
+            Мои задачи
+        </button>
+    </div>
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
