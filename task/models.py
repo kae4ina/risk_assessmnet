@@ -62,6 +62,14 @@ class Task(models.Model):
         if not self.user_measure and not self.default_measure:
             raise ValidationError("Задача должна быть связана с мерой (пользовательской или системной)")
 
+    def save(self, *args, **kwargs):
+        if self.pk:  # Если задача уже существует
+            old_task = Task.objects.get(pk=self.pk)
+            if (self.status.name.lower() == "выполнено" and
+                    old_task.status.name.lower() != "выполнено" and
+                    not self.end_date):
+                self.end_date = timezone.now()
+        super().save(*args, **kwargs)
 
 
 

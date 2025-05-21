@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from measure.models import DefaultMeasure
@@ -49,7 +50,6 @@ def task_list(request):
 @require_POST
 def update_task_status(request, task_id):
     try:
-
         try:
             data = json.loads(request.body)
             status_id = data.get('status_id')
@@ -58,22 +58,27 @@ def update_task_status(request, task_id):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
-
         try:
             task = Task.objects.get(id=task_id)
-            status = TaskStatus.objects.get(id=status_id)
+            new_status = TaskStatus.objects.get(id=status_id)
+            old_status = task.status
         except Task.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Task not found'}, status=404)
         except TaskStatus.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Status not found'}, status=404)
 
+        # Проверяем, меняется ли статус на "Выполнено"
+        if (new_status.name.lower() == "выполнено" and
+                (old_status.name.lower() != "выполнено" or not task.end_date)):
+            task.end_date = timezone.now()
 
-        task.status = status
+        task.status = new_status
         task.save()
 
         return JsonResponse({
             'success': True,
-            'new_status_name': status.name
+            'new_status_name': new_status.name,
+            'end_date': task.end_date.isoformat() if task.end_date else None
         })
 
     except Exception as e:
