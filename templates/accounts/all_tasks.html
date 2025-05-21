@@ -3,68 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <title>Tasks</title>
-    <style>
-       body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
+   <style>
+            :root {
+            --primary-color: #7B4AE2;
+            --primary-light: #9D75FF;
+            --primary-dark: #5A2DBA;
+            --background: #F8F9FF;
+            --card-bg: #FFFFFF;
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --border-color: #E2E8F0;
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
+        /* Темная тема */
+        [data-theme="dark"] {
+            --primary-color: #9D75FF;
+            --primary-light: #7B4AE2;
+            --primary-dark: #5A2DBA;
+            --background: #1A1A2E;
+            --card-bg: #16213E;
+            --text-color: #E2E8F0;
+            --text-light: #A0AEC0;
+            --border-color: #2D3748;
+            --success-color: #68D391;
+            --warning-color: #F6AD55;
+            --danger-color: #FC8181;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Кнопка переключения темы */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .theme-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+
+        .company-selector {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .company-selector label {
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .company-selector select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            min-width: 250px;
+            transition: all 0.2s;
+        }
+
+        .company-selector select:hover {
+            border-color: var(--primary-light);
+        }
+
+        .company-selector select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(123, 74, 226, 0.2);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(123, 74, 226, 0.08);
         }
 
         th, td {
-            padding: 12px;
+            padding: 12px 15px;
             text-align: left;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid var(--border-color);
         }
 
         th {
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+            font-weight: 600;
         }
 
         tr:hover {
-            background-color: #ddd;
+            background-color: rgba(123, 74, 226, 0.03);
         }
 
-        td {
-            font-size: 14px;
-            color: #555;
+        tr:nth-child(even) {
+            background-color: rgba(123, 74, 226, 0.02);
         }
 
-        select {
-            padding: 5px;
-            width: 100%;
-            border: 1px solid #ddd;
+        .status-select {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: all 0.2s;
+            min-width: 120px;
         }
 
-        .company-selector {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
+        .status-select:hover {
+            border-color: var(--primary-light);
         }
 
-        .company-selector select {
-            width: 300px;
-            padding: 8px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+        .status-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(123, 74, 226, 0.2);
+        }
+
+        .no-tasks {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .company-selector {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .company-selector select {
+                width: 100%;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+       /* Кнопка переключения темы */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .theme-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Остальные ваши стили... */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -133,67 +274,115 @@
     </tbody>
 </table>
 
+<div class="theme-switcher">
+        <button class="theme-btn" id="themeToggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </button>
+    </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Функция для обработки изменения статуса
-    function handleStatusChange(event) {
-        const selectElement = event.target;
-        const taskId = selectElement.dataset.taskId;
-        const newStatusId = selectElement.value;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем сохраненную тему в localStorage
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
 
-        // Визуальная обратная связь
-        selectElement.disabled = true;
-        const originalBorder = selectElement.style.border;
-        selectElement.style.border = '2px solid #ffc107';  // Желтый - обработка
+        // Функция переключения темы
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-        fetch(`update_task_status/${taskId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-                'status_id': newStatusId
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Зеленый - успех
-                selectElement.style.border = '2px solid #28a745';
-                console.log('Status updated to:', data.new_status_name);
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Обновляем иконку
+            updateThemeIcon(newTheme);
+        }
+
+        // Обновление иконки в зависимости от темы
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('#themeToggle svg');
+            if (theme === 'dark') {
+                icon.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                `;
             } else {
-                // Красный - ошибка
-                selectElement.style.border = '2px solid #dc3545';
-                console.error('Error:', data.error);
-                // Возвращаем предыдущее значение
-                selectElement.value = selectElement.dataset.previousValue;
+                icon.innerHTML = `
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                `;
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            selectElement.style.border = '2px solid #dc3545';
-            selectElement.value = selectElement.dataset.previousValue;
-        })
-        .finally(() => {
-            setTimeout(() => {
-                selectElement.style.border = originalBorder;
-                selectElement.disabled = false;
-            }, 1000);
-        });
-    }
+        }
 
-    // Назначаем обработчики и сохраняем начальные значения
-    document.querySelectorAll('.status-select').forEach(select => {
-        select.dataset.previousValue = select.value;
-        select.addEventListener('change', handleStatusChange);
+        // Инициализация иконки
+        updateThemeIcon(currentTheme);
+
+        // Назначаем обработчик клика на кнопку
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        // Ваш код для обработки статусов задач
+        function handleStatusChange(event) {
+            const selectElement = event.target;
+            const taskId = selectElement.dataset.taskId;
+            const newStatusId = selectElement.value;
+
+            selectElement.disabled = true;
+            const originalBorder = selectElement.style.border;
+            selectElement.style.border = '2px solid var(--warning-color)';
+
+            fetch(`update_task_status/${taskId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'status_id': newStatusId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    selectElement.style.border = '2px solid var(--success-color)';
+                    selectElement.dataset.previousValue = newStatusId;
+                } else {
+                    selectElement.style.border = '2px solid var(--danger-color)';
+                    selectElement.value = selectElement.dataset.previousValue;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                selectElement.style.border = '2px solid var(--danger-color)';
+                selectElement.value = selectElement.dataset.previousValue;
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    selectElement.style.border = originalBorder;
+                    selectElement.disabled = false;
+                }, 1000);
+            });
+        }
+
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.dataset.previousValue = select.value;
+            select.addEventListener('change', handleStatusChange);
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>
