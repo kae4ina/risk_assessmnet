@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
+
+from company.models import Company
 from .models import ThreatWays, Ways, UserRisk, DefaultMeasure, DefaultMeasureGroup
 from .forms import RiskCreationForm
 from django.http import JsonResponse
@@ -71,12 +73,29 @@ def load_all_ways(request):
 @login_required
 def user_risks(request):
     risks = UserRisk.objects.filter(user=request.user) \
-        .select_related('general_object') \
+        .select_related('general_object', 'company') \
         .prefetch_related('threats', 'ways') \
         .order_by('-created_at')
 
-    return render(request, 'solver/user_risks.html', {'risks': risks})
+    # Получаем список компаний пользователя для фильтра
+    companies = Company.objects.filter(companyuser__user=request.user).distinct()
 
+    # Фильтрация по компании (если передана в GET-параметре)
+    company_id = request.GET.get('company')
+    if company_id:
+        risks = risks.filter(company_id=company_id)
+
+    # Фильтрация по уровню риска (если передана в GET-параметре)
+    risk_level = request.GET.get('risk_level')
+    if risk_level:
+        # Здесь нужно реализовать логику фильтрации по уровню риска
+        pass
+
+    return render(request, 'solver/user_risks.html', {
+        'risks': risks,
+        'companies': companies,
+        'selected_company': company_id
+    })
 
 @login_required
 def risk_detail(request, risk_id):

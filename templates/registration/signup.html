@@ -4,104 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <style>
+       <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            color: #ffffff;
+            color: #333333;
         }
 
-        h2 {
-            color: #9c6ad6;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
-            text-shadow: 0 2px 4px rgba(156, 106, 214, 0.3);
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
         }
 
         form {
-            background: rgba(30, 30, 30, 0.9);
+            background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(156, 106, 214, 0.6),
-                        0 0 60px rgba(156, 106, 214, 0.3);
-            border: 1px solid #9c6ad6;
-            width: 350px;
-            transition: box-shadow 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(93, 120, 255, 0.1);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
         }
 
-        form:hover {
-            box-shadow: 0 0 40px rgba(156, 106, 214, 0.8),
-                        0 0 80px rgba(156, 106, 214, 0.4);
+        h1 {
+            color: #5d78ff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
         }
 
         .form-group {
             margin-bottom: 20px;
+            width: 100%;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
-            color: #cccccc;
+            color: #555555;
             font-size: 14px;
+            font-weight: 500;
         }
 
         input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
+            box-sizing: border-box;
             padding: 12px;
-            background: rgba(50, 50, 50, 0.5);
-            border: 1px solid #333333;
-            border-radius: 5px;
-            color: #ffffff;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            color: #333333;
             font-size: 16px;
             transition: all 0.3s ease;
-            margin-bottom: 5px;
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus {
-            border-color: #9c6ad6;
+            border-color: #5d78ff;
+            background: white;
             outline: none;
-            box-shadow: 0 0 10px rgba(156, 106, 214, 0.5);
+            box-shadow: 0 0 0 3px rgba(93, 120, 255, 0.1);
         }
 
         button {
-            background-color: #663399;
+            background-color: #5d78ff;
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             width: 100%;
             font-weight: 600;
             margin-top: 15px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(102, 51, 153, 0.4);
+            box-shadow: 0 4px 15px rgba(93, 120, 255, 0.3);
         }
 
         button:hover {
-            background-color: #7d48b1;
+            background-color: #4a65e6;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 51, 153, 0.6);
-        }
-
-        .error {
-            color: #ff6b6b;
-            font-size: 14px;
-            margin: 5px 0;
+            box-shadow: 0 6px 20px rgba(93, 120, 255, 0.4);
         }
 
         .password-requirements {
-            color: #aaaaaa;
+            color: #666666;
             font-size: 12px;
             margin-top: 5px;
             padding-left: 15px;
@@ -109,27 +104,23 @@
 
         .password-requirements li {
             margin-bottom: 3px;
+            list-style-type: none;
+            position: relative;
+            padding-left: 20px;
         }
 
-        .password-requirements .valid {
-            color: #6bd66b;
+        .password-requirements li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #5d78ff;
         }
 
-        .links {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .links a {
-            color: #9c6ad6;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .links a:hover {
-            color: #ffffff;
-            text-decoration: underline;
+        .divider {
+            border: none;
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
         }
     </style>
 </head>
