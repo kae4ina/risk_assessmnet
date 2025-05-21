@@ -22,7 +22,7 @@ def company_create(request):
             company=form_company.save()
             company_user=CompanyUser(company=company, user=request.user)
             company_user.save()
-            return redirect('company_saved')
+            return redirect('my_companies')
     else:
         form_company = CompanyForm()
 

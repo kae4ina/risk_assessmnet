@@ -1,0 +1,121 @@
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #212529; /* Очень темный фон */
+            color: #f8f9fa; /* Светлый текст */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #6f42c1; /* Фиолетовый цвет */
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон для контента */
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #6f42c1; /* Фиолетовый цвет заголовка */
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #e9ecef; /* Светло-серый текст */
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: background 0.3s ease, transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login {
+            background-color: #6f42c1; /* Фиолетовая кнопка для входа */
+        }
+
+        .signup {
+            background-color: #495057; /* Темно-серая кнопка для регистрации */
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+            transform: scale(1.05); /* Увеличение кнопки при наведении */
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #6f42c1; /* Фиолетовый цвет подвала */
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Анимация */
+        .image-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            z-index: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        img {
+            width: 150px; /* Ширина изображений */
+            height: auto;
+            margin: 10px;
+            border-radius: 5px; /* Скругление углов изображений */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
