@@ -26,6 +26,8 @@ def task_list(request):
 
 
     selected_company_id = request.GET.get('company_id')
+    measure_type = request.GET.get('measure_type', '')
+    task_status = request.GET.get('task_status')
 
 
     tasks = Task.objects.filter(
@@ -33,10 +35,19 @@ def task_list(request):
     ).distinct()
 
 
-    if selected_company_id:
+    if selected_company_id and selected_company_id != 'None':
         tasks = tasks.filter(
             risk_relations__risk__company_id=selected_company_id
         )
+
+    if measure_type == 'user':
+        tasks = tasks.filter(user_measure__isnull=False)
+    elif measure_type == 'default':
+        tasks = tasks.filter(default_measure__isnull=False)
+
+
+    if task_status and task_status != 'None':
+        tasks = tasks.filter(status_id=task_status)
 
     statuses = TaskStatus.objects.all()
 
@@ -44,9 +55,10 @@ def task_list(request):
         'tasks': tasks,
         'statuses': statuses,
         'user_companies': user_companies,
-        'selected_company_id': int(selected_company_id) if selected_company_id else None
+        'selected_company_id': selected_company_id,
+        'measure_type': measure_type,
+        'selected_status': task_status
     })
-
 @csrf_exempt
 @require_POST
 def update_task_status(request, task_id):
@@ -68,7 +80,7 @@ def update_task_status(request, task_id):
         except TaskStatus.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Status not found'}, status=404)
 
-        # Проверяем, меняется ли статус на "Выполнено"
+
         if (new_status.name.lower() == "выполнено" and
                 (old_status.name.lower() != "выполнено" or not task.end_date)):
             task.end_date = timezone.now()
@@ -138,13 +150,13 @@ def create_task_from_measure(request):
 @csrf_exempt
 def create_task_from_user_measure(request):
     try:
-        # Получаем данные из формы
+
         name = request.POST.get('name')
         description = request.POST.get('description')
         related_company_id = request.POST.get('related_company')
         related_risk_id = request.POST.get('related_risk')
 
-        # Валидация обязательных полей
+
         if not all([name, related_company_id, related_risk_id]):
             return JsonResponse({
                 'success': False,
@@ -164,15 +176,15 @@ def create_task_from_user_measure(request):
                 'error': f'Компания или риск не найдены: {str(e)}'
             }, status=404)
 
-        # Создаем пользовательскую меру (БЕЗ параметра user)
+
         user_measure = UserMeasure.objects.create(
             name=name,
             description=description,
             related_company=company,
-            related_risk=risk  # Связь с риском (в котором уже есть информация о пользователе)
+            related_risk=risk
         )
 
-        # Создаем задачу на основе этой меры
+
         task = Task.objects.create(
             name=f"Задача: {name}",
             description=description,
@@ -181,7 +193,7 @@ def create_task_from_user_measure(request):
             start_date=timezone.now()
         )
 
-        # Связываем задачу с риском
+
         TaskRisk.objects.create(task=task, risk=risk)
 
         return JsonResponse({
@@ -207,7 +219,7 @@ def get_risks(request):
         return JsonResponse({'risks': [], 'error': 'Company ID is required'}, status=400)
 
     try:
-        # Получаем только риски текущего пользователя для выбранной компании
+
         risks = UserRisk.objects.filter(
             company_id=company_id,
             user=request.user

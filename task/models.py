@@ -33,12 +33,6 @@ class Task(models.Model):
         related_name='tasks'
     )
 
-    """  user_risk = models.ForeignKey(
-        to='solver.UserRisk',
-        on_delete=models.CASCADE,
-        related_name='tasks'
-    )"""
-
     status = models.ForeignKey(to=TaskStatus, on_delete=models.CASCADE, null=True, blank=True, default=3)
     start_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)

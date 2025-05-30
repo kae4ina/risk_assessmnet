@@ -282,7 +282,7 @@
                         {{ risk.company.company_name }}
                     </td>
                     <td class="risk-score">
-                        {{ current_score|floatformat:2 }}
+                        {{ current_score|floatformat:2 }} руб.
                         {% if current_score != risk.risk_score %}
                         <small class="previous-score">
                             <s>{{ risk.risk_score|floatformat:2 }}</s>

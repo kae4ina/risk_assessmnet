@@ -181,12 +181,12 @@
 
 <script>
 $(document).ready(function() {
-    // 1. Настройка динамической загрузки рисков
+    // загрузка рисков
     var $companySelect = $('#id_related_company');
     var $riskSelect = $('#id_related_risk');
     var $form = $('#measure-form');
 
-    // Функция загрузки рисков
+
     function loadRisks(companyId) {
         $riskSelect.empty().prop('disabled', true);
 
@@ -223,17 +223,17 @@ $(document).ready(function() {
         });
     }
 
-    // 2. Обработка отправки формы
+    //  отправка формы
     $form.on('submit', function(e) {
         e.preventDefault();
 
-        // Проверяем заполнение полей
+        // проверяем заполнение полей
         if (!$riskSelect.val() || !$companySelect.val()) {
             alert('Заполните все обязательные поля');
             return;
         }
 
-        // Собираем только нужные данные из формы
+
         var formData = {
             name: $form.find('[name="name"]').val(),
             description: $form.find('[name="description"]').val(),
@@ -242,13 +242,13 @@ $(document).ready(function() {
             csrfmiddlewaretoken: $form.find('[name="csrfmiddlewaretoken"]').val()
         };
 
-        // Блокируем кнопку
+
         $('#submit-btn').prop('disabled', true).text('Отправка...');
 
         $.ajax({
             type: 'POST',
             url: $form.attr('action'),
-            data: formData,  // Только явно указанные поля
+            data: formData,
             success: function(response) {
                 if (response.success) {
                     window.location.href = response.redirect_url || '/tasks/';
@@ -265,7 +265,7 @@ $(document).ready(function() {
         });
     });
 
-    // Инициализация
+
     $companySelect.change(function() {
         loadRisks($(this).val());
     });
