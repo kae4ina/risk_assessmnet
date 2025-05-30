@@ -6,6 +6,7 @@ from measure.froms import UserMeasureForm
 from risk.models import Risk
 from django.shortcuts import get_object_or_404, redirect, render
 
+from solver.models import UserRisk
 from task.models import Task, TaskStatus
 
 
@@ -49,3 +50,11 @@ def risk_measure(request, company_id):
         'company': company,
         'risks': risks,
     })
+
+def get_risks(request):
+    company_id = request.GET.get('company_id')
+    if not company_id:
+        return JsonResponse({'risks': []})
+
+    risks = UserRisk.objects.filter(company_id=company_id).values('id', 'name')
+    return JsonResponse({'risks': list(risks)})

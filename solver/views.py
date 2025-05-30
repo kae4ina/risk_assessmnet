@@ -151,3 +151,31 @@ def risk_measures(request, risk_id):
         'current_view': view_type,
     })
 
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import UserRisk
+
+
+@login_required
+def get_risks(request):
+    company_id = request.GET.get('company_id')
+    if not company_id:
+        return JsonResponse({'risks': [], 'error': 'Company ID is required'}, status=400)
+
+    try:
+        risks = UserRisk.objects.filter(
+            company_id=company_id,
+            user=request.user
+        ).values('id', 'name')
+
+        return JsonResponse({
+            'risks': list(risks),
+            'success': True
+        })
+    except Exception as e:
+        return JsonResponse({
+            'risks': [],
+            'error': str(e),
+            'success': False
+        }, status=500)

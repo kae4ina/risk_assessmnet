@@ -2,10 +2,11 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from measure.models import DefaultMeasure
+from measure.models import DefaultMeasure, UserMeasure
 from .models import Task, TaskStatus, TaskRisk
 from django.http import JsonResponse
 from solver.models import UserRisk
@@ -133,3 +134,162 @@ def create_task_from_measure(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+@login_required
+@csrf_exempt
+def create_task_from_user_measure(request):
+    try:
+        # Получаем данные из формы
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        related_company_id = request.POST.get('related_company')
+        related_risk_id = request.POST.get('related_risk')
+
+        # Валидация обязательных полей
+        if not all([name, related_company_id, related_risk_id]):
+            return JsonResponse({
+                'success': False,
+                'error': 'Все обязательные поля должны быть заполнены'
+            }, status=400)
+
+        try:
+            company = Company.objects.get(id=related_company_id)
+            risk = UserRisk.objects.get(
+                id=related_risk_id,
+                company=company,
+                user=request.user  # Проверяем, что риск принадлежит пользователю
+            )
+        except (Company.DoesNotExist, UserRisk.DoesNotExist) as e:
+            return JsonResponse({
+                'success': False,
+                'error': f'Компания или риск не найдены: {str(e)}'
+            }, status=404)
+
+        # Создаем пользовательскую меру (БЕЗ параметра user)
+        user_measure = UserMeasure.objects.create(
+            name=name,
+            description=description,
+            related_company=company,
+            related_risk=risk  # Связь с риском (в котором уже есть информация о пользователе)
+        )
+
+        # Создаем задачу на основе этой меры
+        task = Task.objects.create(
+            name=f"Задача: {name}",
+            description=description,
+            user_measure=user_measure,
+            status=TaskStatus.objects.get(id=3),
+            start_date=timezone.now()
+        )
+
+        # Связываем задачу с риском
+        TaskRisk.objects.create(task=task, risk=risk)
+
+        return JsonResponse({
+            'success': True,
+            'task_id': task.id,
+            'measure_id': user_measure.id,
+            'redirect_url': reverse('task_list')
+        })
+
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Ошибка при создании меры и задачи: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Внутренняя ошибка сервера'
+        }, status=500)
+
+@login_required
+def get_risks(request):
+    company_id = request.GET.get('company_id')
+    if not company_id:
+        return JsonResponse({'risks': [], 'error': 'Company ID is required'}, status=400)
+
+    try:
+        # Получаем только риски текущего пользователя для выбранной компании
+        risks = UserRisk.objects.filter(
+            company_id=company_id,
+            user=request.user
+        ).values('id', 'name')
+
+        return JsonResponse({
+            'risks': list(risks),
+            'success': True
+        })
+    except Exception as e:
+        return JsonResponse({
+            'risks': [],
+            'error': str(e),
+            'success': False
+        }, status=500)
+
+import logging
+logger = logging.getLogger(__name__)
+@csrf_exempt
+@require_POST
+def create_measure_and_task(request):
+    try:
+        logger.info("Минимальная рабочая версия")
+        return JsonResponse({'success': True, 'test': 'OK'})
+    except Exception as e:
+        logger.error(f"Ошибка в минимальной версии: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    """   try:
+        # Явно получаем только нужные поля
+        allowed_fields = {
+            'name': request.POST.get('name'),
+            'description': request.POST.get('description'),
+            'related_company': request.POST.get('related_company'),
+            'related_risk': request.POST.get('related_risk')
+        }
+
+        # Проверка заполненности
+        if not all(allowed_fields.values()):
+            return JsonResponse({
+                'success': False,
+                'error': 'Все обязательные поля должны быть заполнены'
+            }, status=400)
+
+        # Получаем объекты
+        company = Company.objects.get(id=allowed_fields['related_company'])
+        risk = UserRisk.objects.get(id=allowed_fields['related_risk'])
+
+        # Создаем меру (строго определенные поля)
+        user_measure = UserMeasure(
+            name=allowed_fields['name'],
+            description=allowed_fields['description'],
+            related_company=company,
+            related_risk=risk
+        )
+        user_measure.save()  # Явное сохранение без лишних параметров
+
+        # Создаем задачу
+        task = Task.objects.create(
+            name=f"Задача: {allowed_fields['name']}",
+            description=allowed_fields['description'],
+            user_measure=user_measure,
+            status=TaskStatus.objects.get(id=3)
+        )
+
+        # Связь задачи с риском
+        TaskRisk.objects.create(task=task, risk=risk)
+
+        return JsonResponse({
+            'success': True,
+            'task_id': task.id,
+            'measure_id': user_measure.id
+        })
+
+    except (Company.DoesNotExist, UserRisk.DoesNotExist):
+        return JsonResponse({
+            'success': False,
+            'error': 'Компания или риск не найдены'
+        }, status=404)
+    except Exception as e:
+        import logging
+        logging.error(f"Error in create_task_from_user_measure: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Внутренняя ошибка сервера'
+        }, status=500)"""

@@ -1,7 +1,7 @@
 # urls.py
 from django.urls import path
 from .views import create_risk, load_threat_ways, risk_created_success, load_all_ways, user_risks, risk_measures, \
-    risk_detail
+    risk_detail, get_risks
 
 urlpatterns = [
     path('create/', create_risk, name='create_risk'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('my-risks/', user_risks, name='user_risks'),
     path('risk/<int:risk_id>/measures/', risk_measures, name='risk_measures'),
     path('risk/<int:risk_id>/', risk_detail, name='risk_detail'),
+    path('get_risks/', get_risks, name='get_risks'),
 ]

@@ -5,107 +5,275 @@
     <title>Measure create</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-    /* Общие стили для body */
-body {
-    font-family: Arial, sans-serif; /* Шрифт для текста */
-    background-color: #f4f4f4; /* Цвет фона страницы */
-    margin: 20px; /* Отступы вокруг страницы */
-}
+    :root {
+        --primary-color: #7B4AE2;
+        --primary-light: #9D75FF;
+        --primary-dark: #5A2DBA;
+        --background: #F8F9FF;
+        --card-bg: #FFFFFF;
+        --text-color: #2D3748;
+        --text-light: #718096;
+        --border-color: #E2E8F0;
+        --success-color: #48BB78;
+        --warning-color: #ED8936;
+        --danger-color: #F56565;
+    }
 
-/* Стили для заголовка */
-h1 {
-    color: #333; /* Цвет заголовка */
-    text-align: center; /* Центрирование заголовка */
-}
+    /* Темная тема */
+    [data-theme="dark"] {
+        --primary-color: #9D75FF;
+        --primary-light: #7B4AE2;
+        --primary-dark: #5A2DBA;
+        --background: #1A1A2E;
+        --card-bg: #16213E;
+        --text-color: #E2E8F0;
+        --text-light: #A0AEC0;
+        --border-color: #2D3748;
+        --success-color: #68D391;
+        --warning-color: #F6AD55;
+        --danger-color: #FC8181;
+    }
 
-/* Стили для формы */
-form {
-    background-color: #fff; /* Цвет фона формы */
-    border: 1px solid #ccc; /* Рамка формы */
-    border-radius: 5px; /* Закругление углов */
-    padding: 20px; /* Внутренние отступы */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
-    max-width: 400px; /* Максимальная ширина формы */
-    margin: 0 auto; /* Центрирование формы на странице */
-}
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
+    }
 
-/* Стили для кнопки */
-button {
-    background-color: #28a745; /* Цвет фона кнопки */
-    color: white; /* Цвет текста на кнопке */
-    border: none; /* Убираем рамку */
-    border-radius: 5px; /* Закругление углов кнопки */
-    padding: 10px 15px; /* Внутренние отступы кнопки */
-    cursor: pointer; /* Указатель при наведении */
-    font-size: 16px; /* Размер шрифта кнопки */
-    transition: background-color 0.3s; /* Плавный переход цвета фона */
-}
+    h1 {
+        color: var(--primary-color);
+        margin-bottom: 30px;
+    }
 
-/* Эффект наведения на кнопку */
-button:hover {
-    background-color: #218838; /* Цвет фона кнопки при наведении */
-}
+    #measure-form {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: var(--card-bg);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(123, 74, 226, 0.08);
+    }
 
-/* Стили для ссылок */
-a {
-    display: inline-block; /* Для правильного отображения отступов */
-    margin: 10px 0; /* Отступы между ссылками */
-    color: #007bff; /* Цвет ссылок */
-    text-decoration: none; /* Убираем подчеркивание */
-    font-size: 14px; /* Размер шрифта ссылок */
-}
+    #measure-form div {
+        margin-bottom: 20px;
+    }
 
-/* Эффект наведения на ссылки */
-a:hover {
-    text-decoration: underline; /* Подчеркивание при наведении */
-}
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-color);
+    }
 
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-size: 16px;
+        transition: all 0.2s;
+    }
+
+    input[type="text"]:hover,
+    textarea:hover,
+    select:hover {
+        border-color: var(--primary-light);
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(123, 74, 226, 0.2);
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    #submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: block;
+        margin: 30px auto 0;
+    }
+
+    #submit-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(123, 74, 226, 0.3);
+    }
+
+    /* Кнопка переключения темы */
+    .theme-switcher {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+    }
+
+    .theme-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+    }
+
+    .theme-btn:hover {
+        transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+        #measure-form {
+            padding: 20px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            padding: 8px 12px;
+        }
+
+        #submit-btn {
+            width: 100%;
+        }
+    }
 </style>
 </head>
 <body>
 <h1 style="text-align: center;">Меры</h1>
-<form method="post" id="risk-form">
+<form method="post" id="measure-form" action="{% url 'create_task_from_user_measure' %}">
     {% csrf_token %}
     <div>
         {{ form.name.label }} {{ form.name }}<br>
         {{ form.description.label }} {{ form.description }}<br>
         {{ form.related_company.label }} {{ form.related_company }}<br>
-        <label for="risk-select">Related Risk:</label>
-        <select id="risk-select" name="related_risk" class="form-control">
-            <option value="">Select a risk</option>
-        </select>
+        {{ form.related_risk.label }} {{ form.related_risk }}<br>
     </div>
     <br>
-            <button type="submit">Создать меру</button>
+    <button type="submit" id="submit-btn">Создать меру</button>
 </form>
 
-
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
+    // 1. Настройка динамической загрузки рисков
+    var $companySelect = $('#id_related_company');
+    var $riskSelect = $('#id_related_risk');
+    var $form = $('#measure-form');
 
-        $('#id_related_company').change(function() {
-            var companyId = $(this).val();
-            $.ajax({
-                url: '{% url "get_risk" %}',
-                data: {
-                    'company_id': companyId
-                },
-                dataType: 'json',
-                success: function(data) {
-                    var riskSelect = $('#risk-select');
-                    riskSelect.empty();
+    // Функция загрузки рисков
+    function loadRisks(companyId) {
+        $riskSelect.empty().prop('disabled', true);
 
+        if (!companyId) {
+            $riskSelect.append('<option value="">Сначала выберите компанию</option>');
+            return;
+        }
 
-                    $.each(data, function(index, risk) {
-                        riskSelect.append($('<option></option>').attr('value', risk.id).text(risk.name));
+        $riskSelect.append('<option value="">Загрузка рисков...</option>');
+
+        $.ajax({
+            url: '/solver/get_risks/',
+            data: {
+                company_id: companyId  // Только ID компании, без user
+            },
+            success: function(response) {
+                $riskSelect.empty();
+
+                if (response.risks && response.risks.length > 0) {
+                    $riskSelect.append('<option value="">Выберите риск</option>');
+                    $.each(response.risks, function(i, risk) {
+                        $riskSelect.append(
+                            $('<option>').val(risk.id).text(risk.name)
+                        );
                     });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching risks: ", error);
+                } else {
+                    $riskSelect.append('<option value="">Риски не найдены</option>');
                 }
-            });
+                $riskSelect.prop('disabled', false);
+            },
+            error: function(xhr) {
+                $riskSelect.empty().append('<option value="">Ошибка загрузки</option>');
+            }
+        });
+    }
+
+    // 2. Обработка отправки формы
+    $form.on('submit', function(e) {
+        e.preventDefault();
+
+        // Проверяем заполнение полей
+        if (!$riskSelect.val() || !$companySelect.val()) {
+            alert('Заполните все обязательные поля');
+            return;
+        }
+
+        // Собираем только нужные данные из формы
+        var formData = {
+            name: $form.find('[name="name"]').val(),
+            description: $form.find('[name="description"]').val(),
+            related_company: $companySelect.val(),
+            related_risk: $riskSelect.val(),
+            csrfmiddlewaretoken: $form.find('[name="csrfmiddlewaretoken"]').val()
+        };
+
+        // Блокируем кнопку
+        $('#submit-btn').prop('disabled', true).text('Отправка...');
+
+        $.ajax({
+            type: 'POST',
+            url: $form.attr('action'),
+            data: formData,  // Только явно указанные поля
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.redirect_url || '/tasks/';
+                } else {
+                    alert(response.error || 'Ошибка сервера');
+                }
+            },
+            error: function(xhr) {
+                alert('Ошибка соединения: ' + xhr.statusText);
+            },
+            complete: function() {
+                $('#submit-btn').prop('disabled', false).text('Создать меру');
+            }
         });
     });
+
+    // Инициализация
+    $companySelect.change(function() {
+        loadRisks($(this).val());
+    });
+
+    if ($companySelect.val()) {
+        $companySelect.trigger('change');
+    }
+});
 </script>
 </body>
 </html>
