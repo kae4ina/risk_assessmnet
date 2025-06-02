@@ -229,9 +229,11 @@
                 <div class="header-title">
                     <h1>Таблица рисков</h1>
                 </div>
-                <button class="btn" onclick="location.href='{% url 'create_risk' %}'">Добавить риск</button>
+                <div>
+                <button class="btn" onclick="location.href='{% url 'create_risk' %}'" style="margin-right: 10px;">Добавить риск</button>
 
                  <button class="btn" onclick="location.href='{% url 'task_list' %}'">Задачи</button>
+                    </div>
             </div>
         </div>
 

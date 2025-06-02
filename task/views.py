@@ -186,7 +186,7 @@ def create_task_from_user_measure(request):
 
 
         task = Task.objects.create(
-            name=f"Задача: {name}",
+            name=f"{name}",
             description=description,
             user_measure=user_measure,
             status=TaskStatus.objects.get(id=3),
