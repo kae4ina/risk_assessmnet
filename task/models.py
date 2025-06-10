@@ -15,7 +15,7 @@ class TaskStatus(models.Model):
 
 class Task(models.Model):
     name = models.CharField(max_length=150)
-    description = models.CharField(max_length=1000, null=True, blank=True)
+    description = models.CharField(max_length=1000, null=True, blank=True, default="")
 
     default_measure = models.ForeignKey(
         to=DefaultMeasure,

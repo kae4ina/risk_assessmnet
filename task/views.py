@@ -179,7 +179,7 @@ def create_task_from_user_measure(request):
 
         user_measure = UserMeasure.objects.create(
             name=name,
-            description=description,
+            description= description,
             related_company=company,
             related_risk=risk
         )
@@ -187,7 +187,7 @@ def create_task_from_user_measure(request):
 
         task = Task.objects.create(
             name=f"{name}",
-            description=description,
+            description= description,
             user_measure=user_measure,
             status=TaskStatus.objects.get(id=3),
             start_date=timezone.now()
